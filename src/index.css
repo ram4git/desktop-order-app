@@ -3,3 +3,104 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+
+.navbar-default {
+  background: #16a085;
+}
+
+.navbar-header a {
+  color: white !important;
+  font-size: 24px !important;
+}
+
+.navbar-nav a {
+  color: white !important;
+  text-transform: uppercase;
+  width: 120px;
+  text-align: center;
+}
+
+.navbar-nav a:hover {
+  color: #2980b9 !important;
+  font-weight: bold;
+}
+
+.navbar-nav button {
+  color: white !important;
+  text-transform: uppercase;
+  margin: 4px 4px;
+}
+
+.navbar-nav button:hover {
+  color: #2980b9 !important;
+  font-weight: bold;
+}
+
+a.navbar-brand {
+  margin: 4px 4px;
+}
+
+.loginForm {
+  text-align: center;
+  margin-top: 80px;
+  color: #16a085;
+}
+
+.loginForm input {
+  height: 60px;
+  font-size: 32px;
+}
+
+.loginForm button {
+  height: 60px;
+  font-size: 32px !important;
+  text-transform: uppercase !important;
+  line-height: 16px !important;
+}
+
+.loginForm form div {
+  margin: 30px 0;
+}
+
+.loginForm form .ui.label {
+  float: left;
+  margin-bottom: -14px;
+  margin-left: 10px !important;
+  background-color: white;
+  color: #16a085;
+}
+
+
+.ui.segment.lorry {
+    height: 400px;
+}
+
+.row.items .segment{
+  height: 600px;
+}
+
+.orders h1 {
+  text-align: center;
+  color: #16a085;
+  text-transform: uppercase;
+}
+
+.settings h1 {
+  text-align: center;
+  color: #16a085;
+  text-transform: uppercase;
+}
+
+.settings .row.agents .segment{
+  height: 600px !important;
+}
+
+.settings .segment.searchResults {
+  overflow: scroll !important;
+  height: 500px !important;
+}
+
+.AgentDetails .buttonGroup {
+    margin: auto;
+    text-align: center ;
+}

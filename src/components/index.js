@@ -1,10 +1,14 @@
 import React, { Component } from 'react'
 import 'bootstrap/dist/css/bootstrap.css'
+import 'semantic-ui-css/semantic.min.css';
 import { Route, BrowserRouter, Link, Redirect, Switch } from 'react-router-dom'
 import Login from './Login'
 import Register from './Register'
 import Home from './Home'
-import Dashboard from './protected/Dashboard'
+import Cart from './protected/Cart'
+import Orders from './protected/Orders'
+import Settings from './protected/Settings'
+
 import { logout } from '../helpers/auth'
 import { firebaseAuth } from '../config/constants'
 
@@ -25,7 +29,7 @@ function PublicRoute ({component: Component, authed, ...rest}) {
       {...rest}
       render={(props) => authed === false
         ? <Component {...props} />
-        : <Redirect to='/dashboard' />}
+      : <Redirect to='/Cart' />}
     />
   )
 }
@@ -54,35 +58,46 @@ export default class App extends Component {
     this.removeListener()
   }
   render() {
+    //const currentRoute = this.props.location.pathname;
+    //console.log('ROUTE=', currentRoute);
+
     return this.state.loading === true ? <h1>Loading</h1> : (
       <BrowserRouter>
         <div>
           <nav className="navbar navbar-default navbar-static-top">
             <div className="container">
               <div className="navbar-header">
-                <Link to="/" className="navbar-brand">React Router + Firebase Auth</Link>
+                <Link to="/" className="navbar-brand">Lalitha Agent Console</Link>
               </div>
-              <ul className="nav navbar-nav pull-right">
-                <li>
-                  <Link to="/" className="navbar-brand">Home</Link>
-                </li>
-                <li>
-                  <Link to="/dashboard" className="navbar-brand">Dashboard</Link>
-                </li>
-                <li>
-                  {this.state.authed
-                    ? <button
-                        style={{border: 'none', background: 'transparent'}}
-                        onClick={() => {
-                          logout()
-                        }}
-                        className="navbar-brand">Logout</button>
-                    : <span>
+              {this.state.authed
+                ?
+                  <ul className="nav navbar-nav pull-right">
+                    <li>
+                      <Link to="/cart" className="navbar-brand active">Cart</Link>
+                    </li>
+                    <li>
+                      <Link to="/orders" className="navbar-brand">Orders</Link>
+                    </li>
+                    <li>
+                      <Link to="/settings" className="navbar-brand">Settings</Link>
+                    </li>
+                    <li>
+                      <button
+                          style={{border: 'none', background: 'transparent'}}
+                          onClick={() => {
+                            logout()
+                          }}
+                          className="navbar-brand">Logout</button>
+                    </li>
+                  </ul>
+                :
+                  <ul className="nav navbar-nav pull-right">
+                    <li>
+                      <span>
                         <Link to="/login" className="navbar-brand">Login</Link>
-                        <Link to="/register" className="navbar-brand">Register</Link>
-                      </span>}
-                </li>
-              </ul>
+                      </span>
+                    </li>
+                  </ul>}
             </div>
           </nav>
           <div className="container">
@@ -90,8 +105,9 @@ export default class App extends Component {
               <Switch>
                 <Route path='/' exact component={Home} />
                 <PublicRoute authed={this.state.authed} path='/login' component={Login} />
-                <PublicRoute authed={this.state.authed} path='/register' component={Register} />
-                <PrivateRoute authed={this.state.authed} path='/dashboard' component={Dashboard} />
+                <PrivateRoute authed={this.state.authed} path='/cart' component={Cart} />
+                <PrivateRoute authed={this.state.authed} path='/orders' component={Orders} />
+                <PrivateRoute authed={this.state.authed} path='/settings' component={Settings} />
                 <Route render={() => <h3>No Match</h3>} />
               </Switch>
             </div>

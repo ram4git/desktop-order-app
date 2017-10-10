@@ -1,9 +1,12 @@
 import firebase from 'firebase'
 
 const config = {
-  apiKey: "AIzaSyDHL6JFTyBcaV60WpE4yXfeO0aZbzA9Xbk",
-  authDomain: "practice-auth.firebaseapp.com",
-  databaseURL: "https://practice-auth.firebaseio.com",
+  apiKey: "AIzaSyD3C0GHIqn8g-CMATS60LDcoQotkqM3ex8",
+  authDomain: "stage-db-b035c.firebaseapp.com",
+  databaseURL: "https://stage-db-b035c.firebaseio.com",
+  projectId: "stage-db-b035c",
+  storageBucket: "stage-db-b035c.appspot.com",
+  messagingSenderId: "950510485815"
 }
 
 firebase.initializeApp(config)
