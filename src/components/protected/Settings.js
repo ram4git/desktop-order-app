@@ -10,14 +10,14 @@ export default class Settings extends Component {
         <Grid>
           <Grid.Row>
             <Grid.Column>
-              <Segment className="main" color="green">
+              <Segment className="main">
                 <Button primary>Add a new Agent</Button>
               </Segment>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row className="agents">
             <Grid.Column width={6}>
-              <Segment className="agentList" color="green">
+              <Segment className="agentList">
                 <Search
                   loading={true}
                   onResultSelect={() => {}}
@@ -29,7 +29,7 @@ export default class Settings extends Component {
               </Segment>
             </Grid.Column>
             <Grid.Column width={10}>
-              <Segment className="AgentDetails" color="green">
+              <Segment className="AgentDetails">
                 <h1>Agent Name</h1>
                 <div className="buttonGroup">
                   <Button content='Text Agent' icon='phone' labelPosition='left' primary/>
