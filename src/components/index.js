@@ -6,6 +6,7 @@ import Login from './Login'
 import Register from './Register'
 import Home from './Home'
 import Cart from './protected/Cart'
+import Buy from './protected/Buy'
 import Orders from './protected/Orders'
 import Settings from './protected/Settings'
 
@@ -73,6 +74,9 @@ export default class App extends Component {
                 ?
                   <ul className="nav navbar-nav pull-right">
                     <li>
+                      <Link to="/buy" className="navbar-brand active">Buy</Link>
+                    </li>
+                    <li>
                       <Link to="/cart" className="navbar-brand active">Cart</Link>
                     </li>
                     <li>
@@ -105,6 +109,7 @@ export default class App extends Component {
               <Switch>
                 <Route path='/' exact component={Home} />
                 <PublicRoute authed={this.state.authed} path='/login' component={Login} />
+                <PrivateRoute authed={this.state.authed} path='/buy' component={Buy} />
                 <PrivateRoute authed={this.state.authed} path='/cart' component={Cart} />
                 <PrivateRoute authed={this.state.authed} path='/orders' component={Orders} />
                 <PrivateRoute authed={this.state.authed} path='/settings' component={Settings} />

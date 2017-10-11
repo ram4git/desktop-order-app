@@ -5,7 +5,7 @@ import { Grid, Segment } from 'semantic-ui-react'
 export default class Cart extends Component {
   render () {
     return (
-      <div className="cart">
+      <div className="cart head">
         <Grid>
           <Grid.Row>
             <Grid.Column>

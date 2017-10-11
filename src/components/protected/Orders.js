@@ -5,7 +5,7 @@ import { Header, Table, Icon } from 'semantic-ui-react'
 export default class Orders extends Component {
   render () {
     return (
-      <div className="orders">
+      <div className="orders head">
         <h1>Your Orders</h1>
         <Table celled padded>
           <Table.Header>

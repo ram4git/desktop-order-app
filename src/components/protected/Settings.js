@@ -5,7 +5,7 @@ import { Button, Grid, Segment, Search, List } from 'semantic-ui-react'
 export default class Settings extends Component {
   render () {
     return (
-      <div className="settings">
+      <div className="settings head">
         <h1>Settings</h1>
         <Grid>
           <Grid.Row>
