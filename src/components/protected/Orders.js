@@ -3,7 +3,19 @@ import { Header, Table, Icon } from 'semantic-ui-react'
 
 
 export default class Orders extends Component {
+
+  componentDidMount() {
+    //get orders for agent orders
+    // set to state
+  }
+
   render () {
+    // iterate over orders in the state and render Table
+    // use react-data-grid
+    // npm install react-data-grid --save
+    // and start using
+
+
     return (
       <div className="orders head">
         <h1>Your Orders</h1>

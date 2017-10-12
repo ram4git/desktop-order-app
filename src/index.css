@@ -133,3 +133,17 @@ a.navbar-brand {
   height: 800px;
   margin-bottom: 320px;
 }
+
+.lorry .progress .bar{
+  height: 200px !important;
+}
+
+.lorry .progress{
+  height: 200px !important;
+}
+
+
+.segment.lorry .lorry {
+  width: 60%;
+  margin: auto;
+}
