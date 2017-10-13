@@ -30,11 +30,11 @@ export default class Login extends Component {
         <form onSubmit={this.handleSubmit}>
           <div className="form-group">
             <Label>EMAIL</Label>
-            <input className="form-control" ref={(email) => this.email = email} placeholder="Email"/>
+            <input className="form-control" ref={(email) => this.email = email} placeholder="you@company.com"/>
           </div>
           <div className="form-group">
             <Label>PASSWORD</Label>
-            <input type="password" className="form-control" placeholder="Password" ref={(pw) => this.pw = pw} />
+            <input type="password" className="form-control" placeholder="********" ref={(pw) => this.pw = pw} />
           </div>
           {
             this.state.loginMessage &&
