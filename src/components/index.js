@@ -66,7 +66,7 @@ export default class App extends Component {
       <BrowserRouter>
         <div>
           <nav className="navbar navbar-default navbar-static-top">
-            <div className="container">
+            <div className="nav-container">
               <div className="navbar-header">
                 <Link to="/" className="navbar-brand">Lalitha Agent Console</Link>
               </div>
@@ -117,6 +117,7 @@ export default class App extends Component {
               </Switch>
             </div>
           </div>
+          <footer>©MRP Solutions</footer>
         </div>
       </BrowserRouter>
     );
