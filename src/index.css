@@ -156,4 +156,15 @@ footer {
 
 .container {
   min-height: 800px;
+  padding-top: 75px;
+}
+
+.nav-container {
+  width: 80%;
+}
+
+.navbar-static-top {
+  position: fixed;
+  width: 100%;
+  margin: auto;
 }
