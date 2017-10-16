@@ -10,7 +10,7 @@ import Orders from './protected/Orders'
 import Settings from './protected/Settings'
 
 import { logout } from '../helpers/auth'
-import { firebaseAuth } from '../config/constants'
+import { authRef } from '../config/constants'
 
 function PrivateRoute ({component: Component, authed, ...rest}) {
   return (
@@ -40,7 +40,7 @@ export default class App extends Component {
     loading: true,
   }
   componentDidMount () {
-    this.removeListener = firebaseAuth().onAuthStateChanged((user) => {
+    this.removeListener = authRef().onAuthStateChanged((user) => {
       if (user) {
         this.setState({
           authed: true,
@@ -61,7 +61,7 @@ export default class App extends Component {
     //const currentRoute = this.props.location.pathname;
     //console.log('ROUTE=', currentRoute);
 
-    return this.state.loading === true ? <h1>Loading</h1> : (
+    return this.state.loading === true ? <h1>Loading...</h1> : (
       <BrowserRouter>
         <div>
           <nav className="navbar navbar-default navbar-static-top">
