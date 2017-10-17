@@ -4,6 +4,10 @@ body {
   font-family: sans-serif;
 }
 
+#root {
+  background: #ecf0f1;
+}
+
 .navbar-default {
   background: #16a085;
 }
@@ -71,11 +75,11 @@ a.navbar-brand {
 
 
 .ui.segment.lorry {
-    height: 400px;
+    min-height: 400px;
 }
 
 .row.items .segment{
-  height: 600px;
+  min-height: 600px;
 }
 
 .head h1 {
@@ -84,12 +88,12 @@ a.navbar-brand {
   text-transform: uppercase;
 }
 .settings .row.agents .segment{
-  height: 600px !important;
+  min-height: 600px !important;
 }
 
 .settings .segment.searchResults {
   overflow: scroll !important;
-  height: 500px !important;
+  min-height: 500px !important;
 }
 
 .AgentDetails .buttonGroup {
@@ -168,4 +172,20 @@ footer {
   position: fixed;
   width: 100%;
   margin: auto;
+}
+
+.currentOrder .card .header {
+  color: #2980b9 !important;
+}
+
+.currentOrder .ui.fluid.card {
+    background: #ecf9f2;
+}
+
+.currentOrder .extra.content {
+  background: #1abc9c !important;
+}
+
+.currentOrder .extra h5.header {
+  color: blue !important;
 }

@@ -33,7 +33,7 @@ export default class Settings extends Component {
                 <h1>Agent Name</h1>
                 <div className="buttonGroup">
                   <Button content='Text Agent' icon='phone' labelPosition='left' primary/>
-                  <Button content='Edit Agent' icon= 'edit' labelPosition='left' primary/>
+                  <Button content='Edit Agent' icon='edit' labelPosition='left' primary/>
                   <Button content='Delete Agent' icon='trash' labelPosition='left' primary/>
                 </div>
             </Segment>

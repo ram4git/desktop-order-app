@@ -45,7 +45,6 @@ export default class Cart extends Component {
   }
 
   renderCartItems() {
-    const src = ''
     return(
       <Card.Group>
         <Card color='red' inverted/>
