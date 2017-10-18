@@ -1,4 +1,4 @@
-import { dbRef, authRef } from '../config/constants'
+import { ref, authRef } from '../config/constants'
 
 export function auth (email, pw) {
   return authRef().createUserWithEmailAndPassword(email, pw)
@@ -18,7 +18,7 @@ export function resetPassword (email) {
 }
 
 export function saveUser (user) {
-  return dbRef.child(`users/${user.uid}/info`)
+  return ref.child(`users/${user.uid}/info`)
     .set({
       email: user.email,
       uid: user.uid
