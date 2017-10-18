@@ -43,7 +43,6 @@ export default class Orders extends Component {
         key: 'orderId',
         name: 'ORDER-ID',
         filterable: true,
-        formatter: numberFormatter
       },
       {
         key: 'time',
@@ -90,7 +89,6 @@ export default class Orders extends Component {
     const orders = [];
     ref.child(refPath).orderByChild('uid').equalTo('9849123866').once('value', (snap) => {
       const orderData = snap.val();
-      console.log('ORDER DATA=', JSON.stringify(orderData, null, 2));
       Object.keys(orderData).forEach(orderId => {
         const { time, status, isSubAgentOrder, cart} = orderData[orderId];
         const { totalWeight, grossPrice } = cart;
