@@ -7,6 +7,7 @@ import { Header, Card, Table } from 'semantic-ui-react'
 
 
 //17AUG7-ANI984-923 - temporary order for testing
+//9849123866 - mobile number for testing
 
 
 export default class Cart extends Component {
