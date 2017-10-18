@@ -147,8 +147,9 @@ a.navbar-brand {
 
 
 .segment.lorry .lorry {
-  width: 60%;
+  width: 45%;
   margin: auto;
+  margin-left: 280px;
 }
 
 footer {
@@ -188,4 +189,15 @@ footer {
 
 .currentOrder .extra h5.header {
   color: blue !important;
+}
+
+.orderSummary {
+  position: relative !important;
+}
+
+.orderSummary img.ui.huge.fluid.image {
+  margin: auto !important;
+  position: absolute !important;
+  z-index: 200;
+  position: absolute;
 }

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Progress } from 'semantic-ui-react'
+import { Progress, Image } from 'semantic-ui-react'
 
 
 export default class Lorry extends Component {
@@ -10,8 +10,9 @@ export default class Lorry extends Component {
       const percent = 100*currentLoad/lorryCapacity;
 
       return (
-        <div className="lorry">
-          <Progress percent={percent} indicating />
+        <div className="orderSummary">
+          <Image src='/lorry.png' size='huge'  fluid/>
+          <Progress className="lorry" percent={percent} indicating />
         </div>
       );
     }
