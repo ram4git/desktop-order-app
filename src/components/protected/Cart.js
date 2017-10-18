@@ -15,7 +15,7 @@ export default class Cart extends Component {
     this.state = {
       lorryCapacity: 14,
       currentLoad: 0,
-      orderId: '17AUG7-ANI984-923'
+      orderId: '22SEP7-ANI984-475'
     };
   }
 
@@ -39,7 +39,7 @@ export default class Cart extends Component {
           <Grid.Row>
             <Grid.Column>
               <Segment className="lorry">
-                <Lorry {...this.state} />
+                <Lorry {...this.state} onChange={ this.onChangeValue.bind(this, 'lorryCapacity') } />
               </Segment>
             </Grid.Column>
           </Grid.Row>
@@ -49,7 +49,6 @@ export default class Cart extends Component {
                 <Header as='h5' textAlign='center' inverted color='orange'>
                   Field Agents Orders
                 </Header>
-                <Input label={`lorryCapacity`} placeholder='lorryCapacity' width={4} onChange={ this.onChangeValue.bind(this, 'lorryCapacity')} value={lorryCapacity} />
                 <Input label={`currentLoad`} placeholder='currentLoad' width={4} onChange={ this.onChangeValue.bind(this, 'currentLoad')} value={currentLoad} />
               </Segment>
             </Grid.Column>
@@ -109,11 +108,11 @@ export default class Cart extends Component {
         const { name, bags, weight, discountedQuintalPrice, price } = productTypeItems[product];
         itemsArray.push(
           <Table.Row key={product}>
-            <Table.Cell>{name}</Table.Cell>
-            <Table.Cell>{bags}</Table.Cell>
-            <Table.Cell>{weight}</Table.Cell>
-            <Table.Cell>{discountedQuintalPrice.toLocaleString('en-IN')}</Table.Cell>
-            <Table.Cell>{price.toLocaleString('en-IN')}</Table.Cell>
+            <Table.Cell textAlign='left'>{name}</Table.Cell>
+            <Table.Cell textAlign='right'>{bags}</Table.Cell>
+            <Table.Cell textAlign='right'>{weight}</Table.Cell>
+            <Table.Cell textAlign='right'>{discountedQuintalPrice.toLocaleString('en-IN')}</Table.Cell>
+            <Table.Cell textAlign='right'>{price.toLocaleString('en-IN')}</Table.Cell>
           </Table.Row>
         )
       })
@@ -124,11 +123,11 @@ export default class Cart extends Component {
       <Table striped>
         <Table.Header>
           <Table.Row>
-            <Table.HeaderCell>Product</Table.HeaderCell>
-            <Table.HeaderCell>Bags</Table.HeaderCell>
-            <Table.HeaderCell>Qnts</Table.HeaderCell>
-            <Table.HeaderCell>Qnt Price</Table.HeaderCell>
-            <Table.HeaderCell>Total Price</Table.HeaderCell>
+            <Table.HeaderCell textAlign='left'>Product</Table.HeaderCell>
+            <Table.HeaderCell textAlign='right'>Bags</Table.HeaderCell>
+            <Table.HeaderCell textAlign='right'>Qnts</Table.HeaderCell>
+            <Table.HeaderCell textAlign='right'>Qnt Price</Table.HeaderCell>
+            <Table.HeaderCell textAlign='right'>Total Price</Table.HeaderCell>
           </Table.Row>
         </Table.Header>
         <Table.Body>

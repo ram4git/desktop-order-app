@@ -75,7 +75,9 @@ a.navbar-brand {
 
 
 .ui.segment.lorry {
-    min-height: 400px;
+  min-height: 400px;
+  display: flex;
+  justify-content: center;
 }
 
 .row.items .segment{
@@ -147,9 +149,10 @@ a.navbar-brand {
 
 
 .segment.lorry .lorry {
-  width: 45%;
+  width: 65%;
   margin: auto;
   margin-left: 280px;
+  margin-bottom: 120px;
 }
 
 footer {
@@ -192,12 +195,19 @@ footer {
 }
 
 .orderSummary {
-  position: relative !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 70%;
 }
 
-.orderSummary img.ui.huge.fluid.image {
+.orderSummary img.ui.huge.image {
   margin: auto !important;
   position: absolute !important;
   z-index: 200;
   position: absolute;
+}
+
+.ui.grid.orderSummaryControls {
+  margin-top: 60px !important;
 }
