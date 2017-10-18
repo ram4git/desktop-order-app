@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Progress, Image, Button, Grid, Dropdown, Label } from 'semantic-ui-react'
+import { Progress, Image, Button, Grid, Dropdown } from 'semantic-ui-react'
 
 const lorryCapacityOptions = [
     { key: '10', value: 10, text: '10 tons' },

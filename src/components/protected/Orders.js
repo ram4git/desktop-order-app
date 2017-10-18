@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
-import { Header, Table, Icon, Card } from 'semantic-ui-react'
+import { Header, Table, Icon } from 'semantic-ui-react'
 import ReactDataGrid from 'react-data-grid';
 import { Toolbar } from 'react-data-grid-addons';
+
 import moment from 'moment';
 import { ref } from '../../config/constants'
 
@@ -91,18 +92,20 @@ export default class Orders extends Component {
       const orderData = snap.val();
       Object.keys(orderData).forEach(orderId => {
         const { time, status, isSubAgentOrder, cart} = orderData[orderId];
-        const { totalWeight, grossPrice } = cart;
-        const totalWeightInTowns = totalWeight/10;
-        const date = new Date(time);
-        const dateString = moment(date).format('DD/MM/YY-h:mm:ssa') + '_'
-        + moment(date).fromNow();
-        orders.push({
-          orderId,
-          time: dateString,
-          status,
-          weight: totalWeightInTowns.toFixed(2),
-          price: grossPrice.toFixed(2).toLocaleString('en-IN')
-        });
+        if(!isSubAgentOrder) {
+          const { totalWeight, grossPrice } = cart;
+          const totalWeightInTowns = totalWeight/10;
+          const date = new Date(time);
+          const dateString = moment(date).format('DD/MM/YY-h:mm:ssa') + '_'
+          + moment(date).fromNow();
+          orders.push({
+            orderId,
+            time: dateString,
+            status,
+            weight: totalWeightInTowns.toFixed(2),
+            price: grossPrice.toLocaleString('en-IN')
+          });
+        }
       })
       this.setState({
         rows: orders
@@ -137,6 +140,20 @@ export default class Orders extends Component {
     this.setState({filters: {} });
   }
 
+  handleGridSort = (sortColumn, sortDirection) => {
+    const comparer = (a, b) => {
+      if (sortDirection === 'ASC') {
+        return (a[sortColumn] > b[sortColumn]) ? 1 : -1;
+      } else if (sortDirection === 'DESC') {
+        return (a[sortColumn] < b[sortColumn]) ? 1 : -1;
+      }
+    };
+
+    const rows = sortDirection === 'NONE' ? this.state.originalRows.slice(0) : this.state.rows.sort(comparer);
+
+    this.setState({ rows });
+  }
+
   render () {
     // iterate over orders in the state and render Table
     // use react-data-grid
@@ -148,7 +165,7 @@ export default class Orders extends Component {
       <ReactDataGrid
         columns={this._columns}
         rowGetter={this.rowGetter.bind(this)}
-        enableCellSelect={true}
+        onGridSort={this.handleGridSort.bind(this)}
         rowsCount={this.getSize()}
         minHeight={600}
         toolbar={<Toolbar enableFilter={true}/>}
