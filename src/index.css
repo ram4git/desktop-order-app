@@ -300,5 +300,14 @@ footer {
 }
 
 td strong {
-  color: #f39c12;
+  color: #2980b9;
+}
+
+.menu.transition.visible span.text {
+  font-weight: bolder;
+  color: #2980b9;
+}
+.ui.search.selection.dropdown .text{
+  font-weight: bolder;
+  color: #2980b9;
 }
