@@ -31,12 +31,12 @@ export default class Lorry extends Component {
                 />
               <Dropdown placeholder='Lorry Capacity' search selection options={lorryCapacityOptions} onChange={this.props.onChange.bind(this)} value={this.props.lorryCapacity}/>
             </Grid.Column>
-            <Grid.Column width={4}>
+            <Grid.Column width={8}>
               <Button
                 content='PLACE ORDER'
                 positive
                 onClick={this.props.onSubmit.bind(this)}
-                ac
+                fluid
               />
             </Grid.Column>
 

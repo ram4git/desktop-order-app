@@ -286,7 +286,15 @@ footer {
 }
 
 .orderDetails .summary  button.ui.fluid.button {
-    width: 60%;
-    margin: auto;
-    text-transform: uppercase;
+  width: 60%;
+  margin: auto;
+  text-transform: uppercase;
+}
+
+.fieldAgentOrders h5.ui.center.aligned.header {
+  text-transform: uppercase;
+}
+
+.extra.content h5.ui.right.header {
+  margin-bottom: 0;
 }

@@ -290,7 +290,7 @@ export default class Cart extends Component {
               </Card.Content>
               <Card.Content extra>
                 <div className='ui two buttons'>
-                  <Button positive fluid onClick={that.openTheModal.bind(that,orderId, key)}>VIEW</Button>
+                  <Button primary fluid onClick={that.openTheModal.bind(that,orderId, key)}>VIEW</Button>
                 </div>
               </Card.Content>
             </Card>
@@ -354,7 +354,7 @@ export default class Cart extends Component {
               {`₹${shopGrossAmount.toLocaleString('en-IN')}/${totalWeight} qnts`}
           </Header>
           <Card.Meta textAlign='right'>
-             Discount = {`₹${shopDiscountAmount}`}
+             discount: {`₹${shopDiscountAmount.toLocaleString('en-IN')}`}
           </Card.Meta>
           </Card.Content>
         </Card>
