@@ -235,3 +235,8 @@ footer {
 @keyframes blinker {
   50% { opacity: 0; }
 }
+
+
+.currentOrder .subAgentOrder {
+  padding: 8px 0;
+}
