@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Grid, Segment, Input } from 'semantic-ui-react'
 import Lorry from './Lorry'
 import { ref } from '../../config/constants'
-import { Header, Card, Table, Modal, Button } from 'semantic-ui-react'
+import { Header, Card, Table, Modal, Button, Message } from 'semantic-ui-react'
 
 
 
@@ -73,7 +73,7 @@ export default class Cart extends Component {
           <Grid.Row className="items">
             <Grid.Column width={6}>
               <Segment className="fieldAgentOrders">
-                <Header as='h5' textAlign='center' inverted color='orange'>
+                <Header as='h5' textAlign='center' inverted color='green'>
                   Field Agents Orders
                 </Header>
                 { this.renderSubOrders() }
@@ -82,7 +82,7 @@ export default class Cart extends Component {
             </Grid.Column>
             <Grid.Column width={10}>
               <Segment className="currentOrder">
-                <Header as='h5' textAlign='center' inverted color='orange'>
+                <Header as='h5' textAlign='center' inverted color='green'>
                   Current Order
                 </Header>
                 { this.renderAcceptedOrders() }
@@ -135,7 +135,8 @@ export default class Cart extends Component {
       return null;
     }
 
-    const subOrdersList = [];      const that = this;
+    const subOrdersList = [];
+    const that = this;
     Object.keys(subOrders).forEach(key => {
       const singleSubAgentOrders = subOrders[key];
       Object.keys(singleSubAgentOrders).forEach(function(orderId) {
@@ -165,9 +166,13 @@ export default class Cart extends Component {
           </Card>
           </div>
         )
-
       });
     });
+    if(!subOrdersList.length) {
+      subOrdersList.push(
+        <Message floating content='No sub agent orders!'  color='orange' />
+      );
+    }
     return subOrdersList;
   }
 
@@ -184,6 +189,11 @@ export default class Cart extends Component {
         </div>
       );
     });
+    if(!acceptedOrderShopsList.length) {
+      acceptedOrderShopsList.push(
+        <Message color='orange' floating content='No itesms in the cart. View/Accept sub-agent orders on left to place an order to the Factory!' />
+      );
+    }
     return acceptedOrderShopsList;
   }
 
