@@ -15,7 +15,7 @@ export default class Cart extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      lorryCapacity: 14,
+      lorryCapacity: 17,
       currentLoad: 0,
       orderId: '17AUG7-ANI984-923',
       subOrders: {},
