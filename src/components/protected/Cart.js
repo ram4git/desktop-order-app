@@ -19,8 +19,8 @@ export default class Cart extends Component {
       currentLoad: 0,
       orderId: '17AUG7-ANI984-923',
       subOrders: {},
-      mainOrder: {}
-
+      mainOrder: {},
+      acceptedOrders: []
     };
   }
 
@@ -36,15 +36,20 @@ export default class Cart extends Component {
   }
 
 
-  openTheModal = (orderId) => this.setState({ modalOpen: true, modalOrderId: orderId }, this.fetchOrder);
+  openTheModal = (orderId, subAgentMobile) => this.setState({ modalOpen: true, modalOrderId: orderId, subAgentMobile }, this.fetchOrder);
   closeTheModal = () => this.setState({ modalOpen: false });
 
-  acceptOrder = (orderId) => {
-    let {acceptedOrders} = this.state;
-    acceptedOrders.push(orderId);
+  acceptOrder = (orderId, orderData) => {
+    const { acceptedOrders, subOrders, subAgentMobile } = this.state;
+    const newAcceptedOrders = [...acceptedOrders];
+    newAcceptedOrders.push(orderData);
+    const {...newSubOrders} = subOrders;
+    delete newSubOrders[subAgentMobile][orderId];
+//    const {[orderId]: ignore, ...newSubAgentOrders} = newSubOrders[subAgentMobile];
     this.setState({
-        acceptedOrders : acceptedOrders,
-        modalOpen : false
+        acceptedOrders: newAcceptedOrders,
+        modalOpen: false,
+        subOrders: newSubOrders
     });
 
     //populate into Ram's mainAgentOrders field from acceptedOrders
@@ -52,6 +57,8 @@ export default class Cart extends Component {
 
   render () {
     const { currentLoad } = this.state;
+    // <Input label={`currentLoad`} placeholder='currentLoad' width={4} onChange={ this.onChangeValue.bind(this, 'currentLoad')} value={currentLoad} />
+
 
     return (
       <div className="cart head">
@@ -69,7 +76,6 @@ export default class Cart extends Component {
                 <Header as='h5' textAlign='center' inverted color='orange'>
                   Field Agents Orders
                 </Header>
-                <Input label={`currentLoad`} placeholder='currentLoad' width={4} onChange={ this.onChangeValue.bind(this, 'currentLoad')} value={currentLoad} />
                 { this.renderSubOrders() }
                 { this.renderViewOrderModal() }
               </Segment>
@@ -89,19 +95,19 @@ export default class Cart extends Component {
   }
 
   renderViewOrderModal() {
-    const { modalOrderId } = this.state;
+    const { modalOrderId, modalOpen, modelOrderData } = this.state;
 
     return (
-      <Modal basic open={this.state.modalOpen} onClose={this.closeTheModal.bind(this)}>
+      <Modal basic open={modalOpen} onClose={this.closeTheModal.bind(this)}>
         <Modal.Header>
           Details of order : [ <span className="head">{ modalOrderId }</span> ]
         </Modal.Header>
         <Modal.Content scrolling>
-          { this.renderOrderShopsAndItems(this.state.modelOrderData) }
+          { this.renderOrderShopsAndItems(modelOrderData) }
         </Modal.Content>
         <Modal.Actions>
           <Button negative content='REJECT' onClick={this.closeTheModal.bind(this)} />
-          <Button positive icon='checkmark' labelPosition='right' content='ACCEPT' onClick={this.acceptOrder.bind(this,modalOrderId)} />
+          <Button positive icon='checkmark' labelPosition='right' content='ACCEPT' onClick={this.acceptOrder.bind(this,modalOrderId,modelOrderData)} />
         </Modal.Actions>
       </Modal>
     );
@@ -130,13 +136,13 @@ export default class Cart extends Component {
     }
 
     const subOrdersList = [];      const that = this;
-    Object.keys(subOrders).forEach(function(key) {
-      let singleSubAgentOrders = subOrders[key];
+    Object.keys(subOrders).forEach(key => {
+      const singleSubAgentOrders = subOrders[key];
       Object.keys(singleSubAgentOrders).forEach(function(orderId) {
-        let orderDetails = singleSubAgentOrders[orderId];
-        let split = orderDetails.split(`;`);
-        let agentName = split[0];
-        let shopName = split[1];
+        const orderDetails = singleSubAgentOrders[orderId];
+        const split = orderDetails.split(`;`);
+        const agentName = split[0];
+        const shopName = split[1];
         subOrdersList.push(
           <div key={orderId}>
           <Card fluid key={orderId}>
@@ -153,7 +159,7 @@ export default class Cart extends Component {
             </Card.Content>
             <Card.Content extra>
               <div className='ui two buttons'>
-                <Button basic color='green' fluid onClick={that.openTheModal.bind(that,orderId)}>VIEW</Button>
+                <Button basic color='green' fluid onClick={that.openTheModal.bind(that,orderId, key)}>VIEW</Button>
               </div>
             </Card.Content>
           </Card>
