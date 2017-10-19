@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Grid, Segment, Input } from 'semantic-ui-react'
+import { Grid, Segment, Input, Confirm } from 'semantic-ui-react'
 import Lorry from './Lorry'
 import { ref } from '../../config/constants'
 import { Header, Card, Table, Modal, Button, Message } from 'semantic-ui-react'
@@ -9,7 +9,7 @@ import { Header, Card, Table, Modal, Button, Message } from 'semantic-ui-react'
 //17AUG7-ANI984-923 - temporary order for testing
 //22SEP7-ANI984-475
 //9849123866 - mobile number for testing
-
+const SUCCESS = 'SUCCESS', ERROR = 'ERROR';
 
 export default class Cart extends Component {
   constructor(props) {
@@ -20,7 +20,9 @@ export default class Cart extends Component {
       orderId: '17AUG7-ANI984-923',
       subOrders: {},
       mainOrder: {},
-      acceptedOrders: []
+      acceptedOrders: [],
+      notificationOpen: false,
+      notificationMsg: {}
     };
   }
 
@@ -66,18 +68,32 @@ export default class Cart extends Component {
     });
   };
 
-  render () {
+  notificationOpen = () => this.setState({ notificationOpen: true })
+  handleNotificationConfirm = () => this.setState({ notificationOpen: false })
+  handleNotificationCancel = () => this.setState({ notificationOpen: false })
+
+  render() {
     const { currentLoad } = this.state;
+    const notificationConfirmLink = <a href={`order/${this.state.notificationOrderId}`} target="_blank"><strong>Take me to Order</strong></a>;
     // <Input label={`currentLoad`} placeholder='currentLoad' width={4} onChange={ this.onChangeValue.bind(this, 'currentLoad')} value={currentLoad} />
 
 
     return (
       <div className="cart head">
+        <Confirm
+          basic
+          open={this.state.notificationOpen}
+          content={this.state.notificationMsg}
+          cancelButton='Return to Cart'
+          confirmButton={notificationConfirmLink}
+          onCancel={this.handleNotificationCancel}
+          onConfirm={this.handleNotificationConfirm}
+        />
         <Grid>
           <Grid.Row>
             <Grid.Column>
               <Segment className="lorry">
-                <Lorry {...this.state} onChange={ this.onChangeValue.bind(this, 'lorryCapacity') } onSubmit= { this.submitOrder.bind(this) } />
+                <Lorry {...this.state} onChange={ this.onChangeValue.bind(this, 'lorryCapacity') } onSubmit={ this.submitOrder.bind(this) } />
               </Segment>
             </Grid.Column>
           </Grid.Row>
@@ -261,8 +277,8 @@ export default class Cart extends Component {
 
   renderSubOrders() {
     const { subOrders } = this.state;
-    if(!subOrders) {
-      return null;
+    if(!subOrders || subOrders == null) {
+      return <Message floating content='No sub agent orders!'  color='orange' />;
     }
 
     const subOrdersList = [];
@@ -412,26 +428,26 @@ export default class Cart extends Component {
     console.log('*********************')
     console.log(this.state);
     const { acceptedOrders, currentLoad , lorryCapacity } = this.state;
-
+    //TODO
     let now = new Date(); let orderMsg = ""; let uid ='9849123866'; let userName ='Anil';
     let newOrder = {
-               uid : uid,
-               time : now,
-               userName : userName,
-               status : "received",
-               priority : (now * -1),
-               orderMsg : orderMsg,
-               isSubAgentOrder : false
-           };
+      uid : uid,
+      time : now,
+      userName : userName,
+      status : "received",
+      priority : (now * -1),
+      orderMsg : orderMsg,
+      isSubAgentOrder : false
+    };
 
-      let mycart = {
-             discount_amount : 0,
-             grossPrice : 0,
-             totalPrice : 0,
-             selectedLorrySize : lorryCapacity,
-             totalWeight : currentLoad,
-             shopDetail : []
-           };
+    let mycart = {
+      discount_amount : 0,
+      grossPrice : 0,
+      totalPrice : 0,
+      selectedLorrySize : lorryCapacity,
+      totalWeight : currentLoad,
+      shopDetail : []
+    };
 
     acceptedOrders.forEach((order) => {
       let cart = order.cart;
@@ -439,7 +455,6 @@ export default class Cart extends Component {
       mycart.grossPrice += cart.grossPrice;
       mycart.totalPrice += cart.totalPrice;
       mycart.shopDetail= mycart.shopDetail.concat(cart.shopDetail);
-
     });
 
 
@@ -455,10 +470,10 @@ export default class Cart extends Component {
 
     var usersRef = ref.child('users/' + uid );
     usersRef.once('value', function(data){
-        var userValue = data.val();
-        userValue["orders"] = userValue["orders"] || [];
-        userValue["orders"].push(orderId);
-        var promise = usersRef.update(userValue);
+      var userValue = data.val();
+      userValue["orders"] = userValue["orders"] || [];
+      userValue["orders"].push(orderId);
+      var promise = usersRef.update(userValue);
     }).catch(function(e){
       console.log(e);
     });
@@ -467,22 +482,41 @@ export default class Cart extends Component {
     let ordersRef = ref.child('orders/' + orderId);
     let promise = ordersRef.set(newOrder);
     let that = this;
-    promise.then(function(e) {
-            //  that.sendSMS(mycart);
-              that.deleteSubAgentOrders(mycart);
-           }).catch(function(e){
-               console.log('Some problem occured while submitting the order',"Sorry!!")
-           });
+    promise
+    .then(e => {
+      //  that.sendSMS(mycart);
+      that.deleteSubAgentOrders(mycart);
+      this.showNotificationMsg(SUCCESS, orderId);
+    })
+    .catch(e => {
+      console.log('Some problem occured while submitting the order',"Sorry!!")
+      this.showNotificationMsg(ERROR, orderId);
+    });
 
 
     var orderListRef = ref.child('orderList');
 
-    orderListRef.transaction(function(orders){
-                 orders=orders||[];
-                 orders.push(orderId);
-                 return orders;
-     });
+    orderListRef.transaction(orders => {
+      orders=orders||[];
+      orders.push(orderId);
+      return orders;
+    });
 
+  }
+
+  showNotificationMsg(notificationType, orderId) {
+    let msg = '';
+    if(notificationType === SUCCESS) {
+      msg = <p>Order <a href={`order/${orderId}`} target="_blank"><strong>{orderId}</strong> </a>   is successfully placed. Check Orders tab for updates </p>;
+    } else {
+      msg = <p>Unable to submit order <a href={`order/${orderId}`} target="_blank"><strong>{orderId}</strong></a>. Contact Lalitha Industries. </p>;
+    }
+    this.setState({
+      notificationMsg: msg,
+      notificationOpen: true,
+      currentLoad: 0,
+      notificationOrderId: orderId
+    });
   }
 
   deleteSubAgentOrders(myCart) {

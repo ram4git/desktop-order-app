@@ -19,7 +19,7 @@ export default class Lorry extends Component {
       const overload = currentLoad/lorryCapacity;
       return (
         <div className="orderSummary">
-          {(overload > 1.1) ? <Message visible className="blink" textAlign="center">Lorry is overloaded. Use bigger Lorry or Remove items from cart.</Message> : null}
+          {(overload > 1.1) ? <Message visible className="blink">Lorry is overloaded. Use bigger Lorry or Remove items from cart.</Message> : null}
           <Image src='/lorry.png' size='huge'/>
           <Progress className="lorry" indicating value={currentLoad} total={lorryCapacity} progress='ratio'/>
           <Grid className="orderSummaryControls">
