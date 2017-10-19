@@ -30,6 +30,17 @@ class dateFormatter extends Component{
   }
 };
 
+class orderLinkFormatter extends Component{
+  render() {
+    const orderId = this.props.value;
+    return (
+      <div>
+        <a href={`order/${orderId}`} target="_blank"><strong>{orderId}</strong></a>
+      </div>
+    );
+  }
+};
+
 
 
 export default class Orders extends Component {
@@ -44,6 +55,7 @@ export default class Orders extends Component {
         key: 'orderId',
         name: 'ORDER-ID',
         filterable: true,
+        formatter: orderLinkFormatter
       },
       {
         key: 'time',
