@@ -211,3 +211,27 @@ footer {
 .ui.grid.orderSummaryControls {
   margin-top: 60px !important;
 }
+
+.orderSummary .bar .progress {
+  background: transparent;
+  font-size: 24px !important;
+  color: black !important;
+  -webkit-text-fill-color: white;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: black;
+  box-shadow: none !important;
+}
+
+.orderSummary .ui.visible.message.blink {
+  text-align: center;
+  font-weight: bold;
+  color: red;
+}
+
+.blink {
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% { opacity: 0; }
+}

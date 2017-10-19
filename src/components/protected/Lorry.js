@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Progress, Image, Button, Grid, Dropdown } from 'semantic-ui-react'
+import { Progress, Image, Button, Grid, Dropdown, Message } from 'semantic-ui-react'
 
 const lorryCapacityOptions = [
     { key: '10', value: 10, text: '10 tons' },
@@ -16,12 +16,12 @@ export default class Lorry extends Component {
 
     render() {
       const { lorryCapacity, currentLoad } = this.props;
-      const percent = 100*currentLoad/lorryCapacity;
-
+      const overload = currentLoad/lorryCapacity;
       return (
         <div className="orderSummary">
+          {(overload > 1.1) ? <Message visible className="blink" textAlign="center">Lorry is overloaded. Use bigger Lorry or Remove items from cart.</Message> : null}
           <Image src='/lorry.png' size='huge'/>
-          <Progress className="lorry" percent={percent} indicating />
+          <Progress className="lorry" indicating value={currentLoad} total={lorryCapacity} progress='ratio'/>
           <Grid className="orderSummaryControls">
             <Grid.Column width={8}>
                 <Button
@@ -29,7 +29,7 @@ export default class Lorry extends Component {
                   disabled
                   primary
                 />
-                <Dropdown value={14} placeholder='Lorry Capacity' search selection options={lorryCapacityOptions} onChange={this.props.onChange.bind(this)}/>
+              <Dropdown value={14} placeholder='Lorry Capacity' search selection options={lorryCapacityOptions} onChange={this.props.onChange.bind(this)} value={this.props.lorryCapacity}/>
             </Grid.Column>
             <Grid.Column width={4}>
               <Button
