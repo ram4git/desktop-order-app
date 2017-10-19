@@ -85,7 +85,7 @@ export default class Cart extends Component {
                 <Header as='h5' textAlign='center' inverted color='orange'>
                   Current Order
                 </Header>
-                { this.renderOrderShopsAndItems(this.state.orderData) }
+                { this.renderAcceptedOrders() }
               </Segment>
             </Grid.Column>
           </Grid.Row>
@@ -169,6 +169,22 @@ export default class Cart extends Component {
       });
     });
     return subOrdersList;
+  }
+
+  renderAcceptedOrders() {
+    const { acceptedOrders } = this.state;
+    const acceptedOrderShopsList = [];
+    if(!acceptedOrders) {
+      return null;
+    }
+    acceptedOrders.forEach( (acceptedOrder,index) => {
+      acceptedOrderShopsList.push(
+        <div className="subAgentOrder">
+          { this.renderOrderShopsAndItems(acceptedOrder) }
+        </div>
+      );
+    });
+    return acceptedOrderShopsList;
   }
 
   renderOrderShopsAndItems(orderData) {
