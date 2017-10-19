@@ -11,7 +11,7 @@ import { ref } from '../../config/constants'
 class numberFormatter extends Component{
   render() {
     return (
-      <div style={{textAlign: 'right', textTransform: 'bolder', fontSize: '22px'}}>
+      <div style={{textAlign: 'right', textTransform: 'bolder', fontSize: '16px', fontWeight: 'bold'}}>
         {this.props.value}
       </div>
     );
@@ -24,7 +24,7 @@ class dateFormatter extends Component{
     const vals = val.split('_');
     return (
       <div>
-        <i style={{color: 'blue', fontSize: '8px'}}>{vals[1]} </i> <strong>{vals[0]}</strong>
+        <i style={{color: 'blue', fontSize: '8px'}}>{vals[1]} </i>{vals[0]}
       </div>
     );
   }
@@ -166,8 +166,8 @@ export default class Orders extends Component {
         columns={this._columns}
         rowGetter={this.rowGetter.bind(this)}
         onGridSort={this.handleGridSort.bind(this)}
-        rowsCount={this.getSize()}
         minHeight={600}
+        rowsCount={this.getSize()}
         toolbar={<Toolbar enableFilter={true}/>}
         onAddFilter={this.handleFilterChange.bind(this)}
         onClearFilters={this.onClearFilters.bind(this)} />
