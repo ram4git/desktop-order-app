@@ -29,7 +29,7 @@ export default class Lorry extends Component {
                   disabled
                   primary
                 />
-              <Dropdown value={14} placeholder='Lorry Capacity' search selection options={lorryCapacityOptions} onChange={this.props.onChange.bind(this)} value={this.props.lorryCapacity}/>
+              <Dropdown placeholder='Lorry Capacity' search selection options={lorryCapacityOptions} onChange={this.props.onChange.bind(this)} value={this.props.lorryCapacity}/>
             </Grid.Column>
             <Grid.Column width={4}>
               <Button

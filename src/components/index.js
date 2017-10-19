@@ -8,6 +8,7 @@ import Cart from './protected/Cart'
 import Buy from './protected/Buy'
 import Orders from './protected/Orders'
 import Settings from './protected/Settings'
+import OrderDetails from './protected/OrderDetails'
 
 import { logout } from '../helpers/auth'
 import { authRef } from '../config/constants'
@@ -112,7 +113,8 @@ export default class App extends Component {
                 <PrivateRoute authed={this.state.authed} path='/cart' component={Cart} />
                 <PrivateRoute authed={this.state.authed} path='/orders' component={Orders} />
                 <PrivateRoute authed={this.state.authed} path='/settings' component={Settings} />
-                <Route render={() => <h3>No Match</h3>} />
+                <PrivateRoute authed={this.state.authed} path="/order/:orderId" component={ OrderDetails }/>
+                <Route render={() => <h3>Ooops! Nothing to show here</h3>} />
               </Switch>
             </div>
           </div>

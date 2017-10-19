@@ -245,7 +245,48 @@ footer {
   50% { opacity: 0; }
 }
 
-
-.currentOrder .subAgentOrder {
+.orderDetails .currentOrder .subAgentOrder {
   padding: 8px 0;
+}
+
+.orderDetails .summary td.value {
+  text-align: right;
+  padding-left: 20px;
+}
+
+.orderDetails .summary td.key {
+  text-align: right;
+}
+
+.orderDetails .summary {
+  margin: auto;
+  text-align: center;
+  margin: 20px 20px;
+}
+
+.orderDetails .summary table {
+  margin: auto;
+}
+
+.orderDetails .summary h2 {
+  margin-bottom: 0;
+  color: #16a085;
+}
+
+.orderDetails .summary h5 {
+  margin: 0 0;
+}
+
+.orderDetails .summary h5 span {
+  color: #2980b9;
+}
+
+.orderDetails .summary h5 strong {
+  color: #2980b9;
+}
+
+.orderDetails .summary  button.ui.fluid.button {
+    width: 60%;
+    margin: auto;
+    text-transform: uppercase;
 }
