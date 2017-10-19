@@ -35,10 +35,11 @@ export default class Lorry extends Component {
               <Button
                 content='PLACE ORDER'
                 positive
-                ref={this.handleRef}
+                onClick={this.props.onSubmit.bind(this)}
+                ac
               />
             </Grid.Column>
-          
+
           </Grid>
         </div>
       );

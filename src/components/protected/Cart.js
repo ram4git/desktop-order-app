@@ -25,7 +25,6 @@ export default class Cart extends Component {
   }
 
   componentDidMount() {
-    //const refPath = `orders/${this.state.orderId}`;
     const ordersRef =  `users/9849123866/suborders`;
     ref.child(ordersRef).once('value', (snap) => {
       console.log('SUBORDERS', snap.val());
@@ -40,16 +39,19 @@ export default class Cart extends Component {
   closeTheModal = () => this.setState({ modalOpen: false });
 
   acceptOrder = (orderId, orderData) => {
-    const { acceptedOrders, subOrders, subAgentMobile } = this.state;
+    const { acceptedOrders, subOrders, subAgentMobile, currentLoad } = this.state;
     const newAcceptedOrders = [...acceptedOrders];
+    orderData.orderId=orderId;
     newAcceptedOrders.push(orderData);
     const {...newSubOrders} = subOrders;
     delete newSubOrders[subAgentMobile][orderId];
+    const newLoad = currentLoad + (orderData.cart.totalWeight)/10;
 //    const {[orderId]: ignore, ...newSubAgentOrders} = newSubOrders[subAgentMobile];
     this.setState({
         acceptedOrders: newAcceptedOrders,
         modalOpen: false,
-        subOrders: newSubOrders
+        subOrders: newSubOrders,
+        currentLoad : newLoad
     });
   };
 
@@ -64,7 +66,7 @@ export default class Cart extends Component {
           <Grid.Row>
             <Grid.Column>
               <Segment className="lorry">
-                <Lorry {...this.state} onChange={ this.onChangeValue.bind(this, 'lorryCapacity') } />
+                <Lorry {...this.state} onChange={ this.onChangeValue.bind(this, 'lorryCapacity') } onSubmit= { this.submitOrder.bind(this) } />
               </Segment>
             </Grid.Column>
           </Grid.Row>
@@ -395,4 +397,157 @@ export default class Cart extends Component {
       [inputName]: value ? parseFloat(value) : 0
     });
   }
+
+  submitOrder(e, data) {
+    console.log('*********************')
+    console.log(this.state);
+    const { acceptedOrders, currentLoad , lorryCapacity } = this.state;
+
+    let now = new Date(); let orderMsg = ""; let uid ='9849123866'; let userName ='Anil';
+    let newOrder = {
+               uid : uid,
+               time : now,
+               userName : userName,
+               status : "received",
+               priority : (now * -1),
+               orderMsg : orderMsg,
+               isSubAgentOrder : true
+           };
+
+      let mycart = {
+             discount_amount : 0,
+             grossPrice : 0,
+             totalPrice : 0,
+             selectedLorrySize : lorryCapacity,
+             totalWeight : currentLoad,
+             shopDetail : []
+           };
+
+    acceptedOrders.forEach((order) => {
+      let cart = order.cart;
+      mycart.discount_amount += cart.discount_amount;
+      mycart.grossPrice += cart.grossPrice;
+      mycart.totalPrice += cart.totalPrice;
+      mycart.shopDetail= mycart.shopDetail.concat(cart.shopDetail);
+
+    });
+
+
+    newOrder['cart']=mycart;
+    console.log(newOrder);
+
+    var monthsText=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+    var mathRandom = Math.floor((Math.random())*1000);
+
+    var orderId= (now.getDate()).toString()  + monthsText[now.getMonth()] + (now.getYear()%10).toString() + '-'+
+              userName.substring(0,3).toUpperCase() + uid.substring(0,3) +'-'+ mathRandom.toString();
+
+
+    var usersRef = ref.child('users/' + uid );
+    usersRef.once('value', function(data){
+        var userValue = data.val();
+        userValue["orders"] = userValue["orders"] || [];
+        userValue["orders"].push(orderId);
+        var promise = usersRef.update(userValue);
+    }).catch(function(e){
+      console.log(e);
+    });
+
+
+    let ordersRef = ref.child('orders/' + orderId);
+    let promise = ordersRef.set(newOrder);
+    let that = this;
+    promise.then(function(e) {
+            //  that.sendSMS(mycart);
+              that.deleteSubAgentOrders(mycart);
+           }).catch(function(e){
+               console.log('Some problem occured while submitting the order',"Sorry!!")
+           });
+
+
+    var orderListRef = ref.child('orderList');
+
+    orderListRef.transaction(function(orders){
+                 orders=orders||[];
+                 orders.push(orderId);
+                 return orders;
+     });
+
+  }
+
+  deleteSubAgentOrders(myCart) {
+    console.log('deleting subagent orders .....' , this.state);
+    const { acceptedOrders } = this.state;
+    acceptedOrders.forEach((order) => {
+        let subAgentMobileNumber = order.uid;
+        let subAgentOrderId = order.orderId;
+        console.log('deleting subagent orders .....' , subAgentMobileNumber, subAgentOrderId);
+        let mainAgentRef = ref.child('users/' + '9849123866' + '/suborders/' +
+                      subAgentMobileNumber + '/' +subAgentOrderId );
+            mainAgentRef.remove();
+
+    })
+    this.setState({acceptedOrders : []});
+  }
+
+
+  sendSMS(myCart) {
+              var smsURL = 'https://www.google.com';
+              myCart.shopDetail.forEach(function(shop,index){
+                  var shopName = shop.name || "";
+                  var text = "Dear " + shopName + "! \nYour order has been  placed successfully.";
+                  var mobile = shop.mobile;
+                  var objectOfAllItems = this.jsonConcat(shop.items.rice || {},shop.items.ravva || {}) || {};
+                  objectOfAllItems = this.jsonConcat(objectOfAllItems,shop.items.broken || {}) || {};
+                  text += "Total Weight = " + shop.totalWeight +" Quintals\n";
+                  text += "We will deliver your goods as soon as possible.\n Thank-you!";
+                  var obj = {};
+                  obj[mobile] = text;
+                 if(smsURL) {
+                     this.makeCorsRequest(smsURL,obj);
+                 }
+              });
+    }
+
+
+    // Make the actual CORS request.
+   makeCorsRequest(smsURL,object) {
+             var xhr = this.createCORSRequest('POST', smsURL);
+             if (!xhr) {
+               return;
+             }
+
+             var params = JSON.stringify(object);
+             xhr.send(params);
+
+     }
+
+
+     // Create the XHR object.
+    createCORSRequest(method, url) {
+            var xhr = new XMLHttpRequest();
+            if ("withCredentials" in xhr) {
+              // XHR for Chrome/Firefox/Opera/Safari.
+              xhr.open(method, url, true);
+            } else if (typeof XDomainRequest != "undefined") {
+              // XDomainRequest for IE.
+              xhr = new XDomainRequest();
+              xhr.open(method, url);
+            } else {
+              // CORS not supported.
+              xhr = null;
+            }
+            xhr.setRequestHeader("Content-Type", "application/json");
+
+            return xhr;
+      }
+
+     jsonConcat(o1, o2) {
+               for (var key in o2) {
+                   o1[key] = o2[key];
+               }
+               return o1;
+    }
+
+
 }
