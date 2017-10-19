@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Grid, Segment, Input } from 'semantic-ui-react'
 import Lorry from './Lorry'
 import { ref } from '../../config/constants'
-import { Header, Card, Table } from 'semantic-ui-react'
+import { Header, Card, Table, Modal, Button } from 'semantic-ui-react'
 
 
 
@@ -25,15 +25,30 @@ export default class Cart extends Component {
   }
 
   componentDidMount() {
-    const refPath = `orders/${this.state.orderId}`;
-    ref.child(refPath).once('value', (snap) => {
-      const orderData = snap.val();
+    //const refPath = `orders/${this.state.orderId}`;
+    const ordersRef =  `users/9849123866/suborders`;
+    ref.child(ordersRef).once('value', (snap) => {
+      console.log('SUBORDERS', snap.val());
       this.setState({
-        orderData
+        subOrders: snap.val()
       });
     });
-
   }
+
+
+  openTheModal = (orderId) => this.setState({ modalOpen: true, modalOrderId: orderId }, this.fetchOrder);
+  closeTheModal = () => this.setState({ modalOpen: false });
+
+  acceptOrder = (orderId) => {
+    let {acceptedOrders} = this.state;
+    acceptedOrders.push(orderId);
+    this.setState({
+        acceptedOrders : acceptedOrders,
+        modalOpen : false
+    });
+
+    //populate into Ram's mainAgentOrders field from acceptedOrders
+  };
 
   render () {
     const { currentLoad } = this.state;
@@ -55,6 +70,8 @@ export default class Cart extends Component {
                   Field Agents Orders
                 </Header>
                 <Input label={`currentLoad`} placeholder='currentLoad' width={4} onChange={ this.onChangeValue.bind(this, 'currentLoad')} value={currentLoad} />
+                { this.renderSubOrders() }
+                { this.renderViewOrderModal() }
               </Segment>
             </Grid.Column>
             <Grid.Column width={10}>
@@ -62,7 +79,7 @@ export default class Cart extends Component {
                 <Header as='h5' textAlign='center' inverted color='orange'>
                   Current Order
                 </Header>
-                { this.renderActiveOrderItems() }
+                { this.renderOrderShopsAndItems(this.state.orderData) }
               </Segment>
             </Grid.Column>
           </Grid.Row>
@@ -71,8 +88,79 @@ export default class Cart extends Component {
     )
   }
 
-  renderActiveOrderItems() {
-    const { orderData } = this.state;
+  renderViewOrderModal() {
+    const { modalOrderId } = this.state;
+
+    return (
+      <Modal size="small" open={this.state.modalOpen} onClose={this.closeTheModal.bind(this)}>
+        <Modal.Header>
+          Details of order : [ <span className="head">{ modalOrderId }</span> ]
+        </Modal.Header>
+        <Modal.Content>
+          { this.renderOrderShopsAndItems(this.state.modelOrderData) }
+        </Modal.Content>
+        <Modal.Actions>
+          <Button negative content='REJECT' onClick={this.closeTheModal.bind(this)} />
+          <Button positive icon='checkmark' labelPosition='right' content='ACCEPT' onClick={this.acceptOrder.bind(this,modalOrderId)} />
+        </Modal.Actions>
+      </Modal>
+    );
+  }
+
+  // Rendering functions should just return JSX
+  // No backend calls
+
+  fetchOrder() {
+    const { modalOrderId } = this.state;
+    const ordersRef =  ref.child(`orders/${modalOrderId}`);
+
+    ordersRef.on('value', (data) => {
+      console.log('modelOrderData=', data.val());
+
+      this.setState({
+        modelOrderData: data.val()
+      })
+    });
+  }
+
+  renderSubOrders() {
+    const { subOrders } = this.state;
+    if(!subOrders) {
+      return null;
+    }
+
+    const subOrdersList = [];      const that = this;
+    Object.keys(subOrders).forEach(function(key) {
+      let singleSubAgentOrders = subOrders[key];
+      Object.keys(singleSubAgentOrders).forEach(function(orderId) {
+        let orderDetails = singleSubAgentOrders[orderId];
+        let split = orderDetails.split(`;`);
+        let agentName = split[0];
+        let shopName = split[1];
+        subOrdersList.push(
+          <div key={orderId} onClick={that.openTheModal.bind(that,orderId)} >
+          <Card fluid key={orderId}>
+            <Card.Content>
+              <Card.Header>
+                {agentName}
+              </Card.Header>
+              <Card.Meta>
+                {orderId}
+              </Card.Meta>
+              <Card.Description>
+                { shopName }
+              </Card.Description>
+            </Card.Content>
+          </Card>
+          </div>
+        )
+
+      });
+    });
+    return subOrdersList;
+  }
+
+  renderOrderShopsAndItems(orderData) {
     if(!orderData) {
       return null;
     }
