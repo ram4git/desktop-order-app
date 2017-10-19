@@ -51,8 +51,6 @@ export default class Cart extends Component {
         modalOpen: false,
         subOrders: newSubOrders
     });
-
-    //populate into Ram's mainAgentOrders field from acceptedOrders
   };
 
   render () {
@@ -92,7 +90,7 @@ export default class Cart extends Component {
         </Grid>
       </div>
     )
-  }
+  };
 
   renderViewOrderModal() {
     const { modalOrderId, modalOpen, modelOrderData } = this.state;
@@ -122,11 +120,130 @@ export default class Cart extends Component {
 
     ordersRef.on('value', (data) => {
       console.log('modelOrderData=', data.val());
+      const orderData = data.val();
+      this.updatePrices(orderData);
 
-      this.setState({
-        modelOrderData: data.val()
-      })
     });
+  }
+
+
+  updatePrices(orderData) {
+    const pricesRef = ref.child(`priceList`);
+    pricesRef.on('value', (data) => {
+      let priceList = data.val();
+      this.calculateDiscount(orderData, priceList);
+    });
+
+  }
+
+  calculateDiscount(orderData , priceList) {
+    const shopArray = orderData.cart.shopDetail;
+    orderData.cart.discount_amount = 0;
+
+    let totaldiscountedPrice = 0; let itemsProcessed = 0;
+
+    const that = this;
+    shopArray.forEach(function(shop){
+
+    var shopDiscountAmount = 0;
+
+    var items = shop.items;
+    var riceObjectOrg = items.rice;
+    var ravvaObjectOrg = items.ravva;
+    var brokenObjectOrg = items.broken;
+    var shopRiceWeight = 0;var shopRavvaWeight = 0; var shopBrokenWeight= 0;
+    for(var productId in riceObjectOrg){
+        shopRiceWeight += riceObjectOrg[productId].weight;
+    }
+    for(var productId in ravvaObjectOrg){
+        shopRavvaWeight += ravvaObjectOrg[productId].weight;
+    }
+    for(var productId in brokenObjectOrg){
+        shopBrokenWeight += brokenObjectOrg[productId].weight;
+    }
+    var ricediscount=0, ravvadiscount=0,brokendiscount=0;
+
+    var areasRef = ref.child('areas/' + shop.areaId );
+    var riceDiscArray = [];var ravvaDiscArray = []; var brokenDiscArray=[];
+   (function() {
+
+       var ravvaObject = ravvaObjectOrg ? JSON.parse(JSON.stringify(ravvaObjectOrg)) : {};
+       var riceObject = riceObjectOrg ? JSON.parse(JSON.stringify(riceObjectOrg)): {};
+       var brokenObject = brokenObjectOrg ? JSON.parse(JSON.stringify(brokenObjectOrg)): {};
+
+    areasRef.once('value', function(data){
+
+        itemsProcessed++;
+        var discounts = data.val().discounts;
+      //  console.log(discounts);
+        if(discounts) {
+            riceDiscArray = discounts.rice || riceDiscArray ;
+            ravvaDiscArray = discounts.ravva ||  ravvaDiscArray;
+            brokenDiscArray = discounts.broken || brokenDiscArray;
+        }
+
+        riceDiscArray.forEach(function(entry){
+        if(shopRiceWeight >= entry.quintals){
+            ricediscount = entry.discount;
+        }
+        });
+
+     ravvaDiscArray.forEach(function(entry){
+        if(shopRavvaWeight >= entry.quintals){
+            ravvadiscount = entry.discount;
+        }
+        });
+
+     brokenDiscArray.forEach(function(entry){
+        if(shopBrokenWeight >= entry.quintals){
+            brokendiscount = entry.discount;
+        }
+        });
+        let areaId = shop.areaId ;
+
+     for(var productId in riceObject){
+           riceObject[productId].quintalWeightPrice=priceList[areaId]['rice'][productId]['Agent'];
+           riceObject[productId]['discountedQuintalPrice']=  riceObject[productId].quintalWeightPrice - ricediscount;
+           riceObject[productId]['price']= riceObject[productId].discountedQuintalPrice * riceObject[productId]['weight'];
+           shopDiscountAmount += ricediscount*riceObject[productId]['weight'];
+           totaldiscountedPrice += ricediscount*riceObject[productId]['weight']
+    }
+    for(var productId in ravvaObject){
+            ravvaObject[productId].quintalWeightPrice=priceList[areaId]['ravva'][productId]['Agent'];
+            ravvaObject[productId]['discountedQuintalPrice']= ravvaObject[productId].quintalWeightPrice - ravvadiscount;
+            ravvaObject[productId]['price']= ravvaObject[productId].discountedQuintalPrice * ravvaObject[productId]['weight']
+            shopDiscountAmount += ravvadiscount*ravvaObject[productId]['weight'];
+            totaldiscountedPrice += ravvadiscount*ravvaObject[productId]['weight'];
+    }
+
+    for(var productId in brokenObject){
+            brokenObject[productId].quintalWeightPrice=priceList[areaId]['broken'][productId]['Agent'];
+            brokenObject[productId]['discountedQuintalPrice']=  brokenObject[productId].quintalWeightPrice - brokendiscount;
+            brokenObject[productId]['price']= brokenObject[productId].discountedQuintalPrice * brokenObject[productId]['weight']
+            shopDiscountAmount += brokendiscount*brokenObject[productId]['weight'];
+            totaldiscountedPrice += brokendiscount*brokenObject[productId]['weight'];
+    }
+
+    shop['items']['rice'] = riceObject;
+    shop['items']['ravva'] = ravvaObject;
+    shop['items']['broken'] = brokenObject;
+
+    shop['shopDiscountAmount'] = shopDiscountAmount;
+    shop['shopGrossAmount'] = shop['totalShopPrice'] - shopDiscountAmount;
+    if(itemsProcessed == shopArray.length) {
+      console.log('order data = = = ' , orderData);
+      orderData.cart.discount_amount = totaldiscountedPrice;
+      that.setState({
+        modelOrderData: orderData
+      })
+    }
+})
+    }());
+
+
+});
+
+
   }
 
   renderSubOrders() {
@@ -205,7 +322,7 @@ export default class Cart extends Component {
     const shops = orderData.cart.shopDetail;
     const shopsList = [];
     shops.forEach((shop, index) => {
-      const { name, mobile, shopGrossAmount, totalWeight, items } = shop;
+      const { name, mobile, shopGrossAmount,shopDiscountAmount, totalWeight, items } = shop;
       shopsList.push(
           <Card fluid key={index}>
           <Card.Content>
@@ -221,8 +338,11 @@ export default class Cart extends Component {
           </Card.Content>
           <Card.Content extra>
             <Header as='h5' textAlign='right' inverted>
-            {`₹${shopGrossAmount.toLocaleString('en-IN')}/${totalWeight} qnts`}
+              {`₹${shopGrossAmount.toLocaleString('en-IN')}/${totalWeight} qnts`}
           </Header>
+          <Card.Meta textAlign='right'>
+             Discount = {`₹${shopDiscountAmount}`}
+          </Card.Meta>
           </Card.Content>
         </Card>
       )
@@ -235,12 +355,13 @@ export default class Cart extends Component {
     Object.keys(items).forEach( productType => {
       const productTypeItems = items[productType];
       Object.keys(productTypeItems).forEach( product => {
-        const { name, bags, weight, discountedQuintalPrice, price } = productTypeItems[product];
+        const { name, bags, weight,quintalWeightPrice, discountedQuintalPrice, price } = productTypeItems[product];
         itemsArray.push(
           <Table.Row key={product}>
             <Table.Cell textAlign='left'>{name}</Table.Cell>
             <Table.Cell textAlign='right'>{bags}</Table.Cell>
             <Table.Cell textAlign='right'>{weight}</Table.Cell>
+            <Table.Cell textAlign='right'>{quintalWeightPrice.toLocaleString('en-IN')}</Table.Cell>
             <Table.Cell textAlign='right'>{discountedQuintalPrice.toLocaleString('en-IN')}</Table.Cell>
             <Table.Cell textAlign='right'>{price.toLocaleString('en-IN')}</Table.Cell>
           </Table.Row>
@@ -257,6 +378,7 @@ export default class Cart extends Component {
             <Table.HeaderCell textAlign='right'>Bags</Table.HeaderCell>
             <Table.HeaderCell textAlign='right'>Qnts</Table.HeaderCell>
             <Table.HeaderCell textAlign='right'>Qnt Price</Table.HeaderCell>
+            <Table.HeaderCell textAlign='right'>Discount Price</Table.HeaderCell>
             <Table.HeaderCell textAlign='right'>Total Price</Table.HeaderCell>
           </Table.Row>
         </Table.Header>

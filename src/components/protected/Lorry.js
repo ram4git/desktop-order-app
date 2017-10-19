@@ -38,13 +38,7 @@ export default class Lorry extends Component {
                 ref={this.handleRef}
               />
             </Grid.Column>
-            <Grid.Column width={4}>
-              <Button
-                negative
-                content='CLEAR ORDER'
-                onClick={this.handleClick}
-              />
-            </Grid.Column>
+          
           </Grid>
         </div>
       );
