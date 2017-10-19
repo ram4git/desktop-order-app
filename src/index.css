@@ -298,3 +298,7 @@ footer {
 .extra.content h5.ui.right.header {
   margin-bottom: 0;
 }
+
+td strong {
+  color: #f39c12;
+}

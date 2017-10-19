@@ -368,14 +368,14 @@ export default class Cart extends Component {
     Object.keys(items).forEach( productType => {
       const productTypeItems = items[productType];
       Object.keys(productTypeItems).forEach( product => {
-        const { name, bags, weight,quintalWeightPrice, discountedQuintalPrice, price } = productTypeItems[product];
+        const { name, bags, weight, quintalWeightPrice, discountedQuintalPrice, price } = productTypeItems[product];
+        const discount = quintalWeightPrice - discountedQuintalPrice;
         itemsArray.push(
           <Table.Row key={product}>
             <Table.Cell textAlign='left'>{name}</Table.Cell>
             <Table.Cell textAlign='right'>{bags}</Table.Cell>
             <Table.Cell textAlign='right'>{weight}</Table.Cell>
-            <Table.Cell textAlign='right'>{quintalWeightPrice.toLocaleString('en-IN')}</Table.Cell>
-            <Table.Cell textAlign='right'>{discountedQuintalPrice.toLocaleString('en-IN')}</Table.Cell>
+            <Table.Cell textAlign='right'>{parseFloat(quintalWeightPrice).toLocaleString('en-IN')}(<strong>{discount}</strong>)</Table.Cell>
             <Table.Cell textAlign='right'>{price.toLocaleString('en-IN')}</Table.Cell>
           </Table.Row>
         )
@@ -390,8 +390,7 @@ export default class Cart extends Component {
             <Table.HeaderCell textAlign='left'>Product</Table.HeaderCell>
             <Table.HeaderCell textAlign='right'>Bags</Table.HeaderCell>
             <Table.HeaderCell textAlign='right'>Qnts</Table.HeaderCell>
-            <Table.HeaderCell textAlign='right'>Qnt Price</Table.HeaderCell>
-            <Table.HeaderCell textAlign='right'>Discount Price</Table.HeaderCell>
+            <Table.HeaderCell textAlign='right'>Qnt Price(disc)</Table.HeaderCell>
             <Table.HeaderCell textAlign='right'>Total Price</Table.HeaderCell>
           </Table.Row>
         </Table.Header>
