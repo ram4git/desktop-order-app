@@ -73,7 +73,7 @@ export default class Cart extends Component {
           <Grid.Row className="items">
             <Grid.Column width={6}>
               <Segment className="fieldAgentOrders">
-                <Header as='h5' textAlign='center' inverted color='green'>
+                <Header as='h5' textAlign='center'>
                   Field Agents Orders
                 </Header>
                 { this.renderSubOrders() }
@@ -82,7 +82,7 @@ export default class Cart extends Component {
             </Grid.Column>
             <Grid.Column width={10}>
               <Segment className="currentOrder">
-                <Header as='h5' textAlign='center' inverted color='green'>
+                <Header as='h5' textAlign='center'>
                   Current Order
                 </Header>
                 { this.renderAcceptedOrders() }
@@ -145,25 +145,25 @@ export default class Cart extends Component {
         const agentName = split[0];
         const shopName = split[1];
         subOrdersList.push(
-          <div key={orderId}>
-          <Card fluid key={orderId}>
-            <Card.Content>
-              <Card.Header>
-                {agentName}
-              </Card.Header>
-              <Card.Meta>
-                {orderId}
-              </Card.Meta>
-              <Card.Description>
-                { shopName }
-              </Card.Description>
-            </Card.Content>
-            <Card.Content extra>
-              <div className='ui two buttons'>
-                <Button basic color='green' fluid onClick={that.openTheModal.bind(that,orderId, key)}>VIEW</Button>
-              </div>
-            </Card.Content>
-          </Card>
+          <div key={orderId} className="subAgentOrders">
+            <Card fluid key={orderId}>
+              <Card.Content>
+                <Card.Header>
+                  {agentName}
+                </Card.Header>
+                <Card.Meta>
+                  {orderId}
+                </Card.Meta>
+                <Card.Description>
+                  { shopName }
+                </Card.Description>
+              </Card.Content>
+              <Card.Content extra>
+                <div className='ui two buttons'>
+                  <Button positive fluid onClick={that.openTheModal.bind(that,orderId, key)}>VIEW</Button>
+                </div>
+              </Card.Content>
+            </Card>
           </div>
         )
       });

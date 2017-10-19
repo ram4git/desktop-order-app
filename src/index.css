@@ -186,6 +186,15 @@ footer {
     background: #ecf9f2;
 }
 
+.subAgentOrders .card .header {
+  color: #2980b9 !important;
+}
+
+.subAgentOrders .ui.fluid.card {
+  background: #ebf0fa;
+  margin: 8px;
+}
+
 .currentOrder .extra.content {
   background: #1abc9c !important;
 }
