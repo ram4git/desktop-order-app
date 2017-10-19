@@ -92,11 +92,11 @@ export default class Cart extends Component {
     const { modalOrderId } = this.state;
 
     return (
-      <Modal size="small" open={this.state.modalOpen} onClose={this.closeTheModal.bind(this)}>
+      <Modal basic open={this.state.modalOpen} onClose={this.closeTheModal.bind(this)}>
         <Modal.Header>
           Details of order : [ <span className="head">{ modalOrderId }</span> ]
         </Modal.Header>
-        <Modal.Content>
+        <Modal.Content scrolling>
           { this.renderOrderShopsAndItems(this.state.modelOrderData) }
         </Modal.Content>
         <Modal.Actions>
