@@ -77,7 +77,7 @@ export default class OrderDetails extends Component {
     const shops = orderData.cart.shopDetail;
     const shopsList = [];
     shops.forEach((shop, index) => {
-      const { name, mobile, shopGrossAmount, totalWeight, items } = shop;
+      const { name, mobile, shopGrossAmount = 0, totalWeight, items } = shop;
       shopsList.push(
           <Card fluid key={index}>
           <Card.Content>
@@ -140,7 +140,7 @@ export default class OrderDetails extends Component {
     Object.keys(items).forEach( productType => {
       const productTypeItems = items[productType];
       Object.keys(productTypeItems).forEach( product => {
-        const { name, bags, weight, discountedQuintalPrice, price, quintalWeightPrice } = productTypeItems[product];
+        const { name, bags, weight, discountedQuintalPrice = 0, price = 0, quintalWeightPrice = 0 } = productTypeItems[product];
         let discount = quintalWeightPrice - discountedQuintalPrice;
         if(discount) {
           discount.toFixed(2);
