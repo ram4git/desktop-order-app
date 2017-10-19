@@ -2,11 +2,11 @@ import React, { Component } from 'react'
 import { Progress, Image, Button, Grid, Dropdown, Message } from 'semantic-ui-react'
 
 const lorryCapacityOptions = [
+    { key: '3', value: 3, text: '3 tons' },
+    { key: '7', value: 7, text: '7 tons' },
     { key: '10', value: 10, text: '10 tons' },
-    { key: '14', value: 14, text: '14 tons' },
-    { key: '16', value: 16, text: '16 tons' },
-    { key: '20', value: 20, text: '20 tons' },
-    { key: '24', value: 24, text: '24 tons' }
+    { key: '17', value: 17, text: '17 tons' },
+    { key: '21', value: 21, text: '21 tons' }
 ];
 
 

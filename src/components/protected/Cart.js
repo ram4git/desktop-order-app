@@ -36,7 +36,18 @@ export default class Cart extends Component {
 
 
   openTheModal = (orderId, subAgentMobile) => this.setState({ modalOpen: true, modalOrderId: orderId, subAgentMobile }, this.fetchOrder);
-  closeTheModal = () => this.setState({ modalOpen: false });
+  closeTheModal = () => this.setState({modalOpen:false});
+  rejectOrder = (orderId, orderData) => {
+    const { subOrders } = this.state;
+    const {...newSubOrders} = subOrders;
+    delete newSubOrders[orderData.uid][orderId];
+    this.setState({
+              modalOpen: false ,
+              subOrders: newSubOrders
+    });
+    let deleteOrderRef = ref.child('users/' + '9849123866/' + 'suborders/' + orderData.uid + '/' + orderId);
+    deleteOrderRef.remove();
+  };
 
   acceptOrder = (orderId, orderData) => {
     const { acceptedOrders, subOrders, subAgentMobile, currentLoad } = this.state;
@@ -106,7 +117,7 @@ export default class Cart extends Component {
           { this.renderOrderShopsAndItems(modelOrderData) }
         </Modal.Content>
         <Modal.Actions>
-          <Button negative content='REJECT' onClick={this.closeTheModal.bind(this)} />
+          <Button negative content='REJECT' onClick={this.rejectOrder.bind(this,modalOrderId,modelOrderData)} />
           <Button positive icon='checkmark' labelPosition='right' content='ACCEPT' onClick={this.acceptOrder.bind(this,modalOrderId,modelOrderData)} />
         </Modal.Actions>
       </Modal>
@@ -411,7 +422,7 @@ export default class Cart extends Component {
                status : "received",
                priority : (now * -1),
                orderMsg : orderMsg,
-               isSubAgentOrder : true
+               isSubAgentOrder : false
            };
 
       let mycart = {
