@@ -138,7 +138,7 @@ export default class Cart extends Component {
         let agentName = split[0];
         let shopName = split[1];
         subOrdersList.push(
-          <div key={orderId} onClick={that.openTheModal.bind(that,orderId)} >
+          <div key={orderId}>
           <Card fluid key={orderId}>
             <Card.Content>
               <Card.Header>
@@ -150,6 +150,11 @@ export default class Cart extends Component {
               <Card.Description>
                 { shopName }
               </Card.Description>
+            </Card.Content>
+            <Card.Content extra>
+              <div className='ui two buttons'>
+                <Button basic color='green' fluid onClick={that.openTheModal.bind(that,orderId)}>VIEW</Button>
+              </div>
             </Card.Content>
           </Card>
           </div>
