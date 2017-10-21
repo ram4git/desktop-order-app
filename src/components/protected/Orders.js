@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { Header, Table, Icon } from 'semantic-ui-react'
 import ReactDataGrid from 'react-data-grid';
-import { Toolbar } from 'react-data-grid-addons';
+const { Toolbar, Data: { Selectors } } = require('react-data-grid-addons');
+
 
 import moment from 'moment';
 import { ref } from '../../config/constants'
@@ -126,15 +127,16 @@ export default class Orders extends Component {
   }
 
   getRows() {
-    return this.state.rows;
+    return Selectors.getRows(this.state);
   }
 
   getSize() {
-    return this.state.rows ? this.state.rows.length : 0;
+    return this.getRows().length;
   }
 
   rowGetter(rowIdx) {
-    return this.state.rows ? this.state.rows[rowIdx] : {};
+    const rows = this.getRows();
+    return rows[rowIdx];
   }
 
   handleFilterChange(filter) {
