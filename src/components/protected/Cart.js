@@ -425,14 +425,12 @@ export default class Cart extends Component {
   }
 
   submitOrder(e, data) {
-    console.log('*********************')
-    console.log(this.state);
     const { acceptedOrders, currentLoad , lorryCapacity } = this.state;
     //TODO
     let now = new Date(); let orderMsg = ""; let uid ='9849123866'; let userName ='Anil';
     let newOrder = {
       uid : uid,
-      time : now,
+      time : now.getTime(),
       userName : userName,
       status : "received",
       priority : (now * -1),
@@ -445,7 +443,7 @@ export default class Cart extends Component {
       grossPrice : 0,
       totalPrice : 0,
       selectedLorrySize : lorryCapacity,
-      totalWeight : currentLoad,
+      totalWeight : currentLoad*10,
       shopDetail : []
     };
 
