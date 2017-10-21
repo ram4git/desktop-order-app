@@ -6,9 +6,10 @@ import { Header, Card, Table, Modal, Button, Message } from 'semantic-ui-react'
 
 
 
-//17AUG7-ANI984-923 - temporary order for testing
-//22SEP7-ANI984-475
-//9849123866 - mobile number for testing
+// 17AUG7-ANI984-923 - temporary order for testing
+// 22SEP7-ANI984-475
+// 9849123866 - mobile number for testing
+//  Shopwise statistic for
 const SUCCESS = 'SUCCESS', ERROR = 'ERROR';
 
 export default class Cart extends Component {
