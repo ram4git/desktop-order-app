@@ -93,6 +93,12 @@ export default class Orders extends Component {
         name: 'Updates',
         filterable: false
       },
+      {
+        key: 'epochTime',
+        name: '',
+        hidden : true,
+        filterable: false
+      },
     ];
   }
 
@@ -116,7 +122,8 @@ export default class Orders extends Component {
             time: dateString,
             status,
             weight: totalWeightInTowns.toFixed(2),
-            price: grossPrice.toLocaleString('en-IN')
+            price: grossPrice.toLocaleString('en-IN'),
+            epochTime : time
           });
         }
       })
@@ -155,6 +162,9 @@ export default class Orders extends Component {
   }
 
   handleGridSort = (sortColumn, sortDirection) => {
+    if(sortColumn === 'time')
+      sortColumn = 'epochTime';
+
     const comparer = (a, b) => {
       if (sortDirection === 'ASC') {
         return (a[sortColumn] > b[sortColumn]) ? 1 : -1;
