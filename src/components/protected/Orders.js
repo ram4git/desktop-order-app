@@ -165,12 +165,28 @@ export default class Orders extends Component {
     if(sortColumn === 'time')
       sortColumn = 'epochTime';
 
+
+
     const comparer = (a, b) => {
-      if (sortDirection === 'ASC') {
-        return (a[sortColumn] > b[sortColumn]) ? 1 : -1;
-      } else if (sortDirection === 'DESC') {
-        return (a[sortColumn] < b[sortColumn]) ? 1 : -1;
+      if(sortColumn === 'price' || sortColumn === 'weight') {
+        let aa = a[sortColumn].replace(/,/g , "");
+        let bb = b[sortColumn].replace(/,/g , "");
+
+        if (sortDirection === 'ASC') {
+          return (Number(aa) > Number(bb)) ? 1 : -1;
+        } else if (sortDirection === 'DESC') {
+          return (Number(aa) < Number(bb)) ? 1 : -1;
+        }
+
+      }else {
+        if (sortDirection === 'ASC') {
+          return (a[sortColumn] > b[sortColumn]) ? 1 : -1;
+        } else if (sortDirection === 'DESC') {
+          return (a[sortColumn] < b[sortColumn]) ? 1 : -1;
+        }
       }
+
+
     };
 
     const rows = sortDirection === 'NONE' ? this.state.originalRows.slice(0) : this.state.rows.sort(comparer);
