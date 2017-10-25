@@ -306,7 +306,12 @@ td strong {
   font-weight: bolder;
   color: #2980b9;
 }
+
 .ui.search.selection.dropdown .text{
   font-weight: bolder;
   color: #2980b9;
+}
+
+.home .ui.image {
+  overflow: hidden !important;
 }
