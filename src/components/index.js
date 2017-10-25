@@ -113,7 +113,7 @@ export default class App extends Component {
                 <PrivateRoute authed={this.state.authed} path='/cart' component={Cart} />
                 <PrivateRoute authed={this.state.authed} path='/orders' component={Orders} />
                 <PrivateRoute authed={this.state.authed} path='/settings' component={Settings} />
-                <PrivateRoute authed={this.state.authed} path="/order/:orderId" component={ OrderDetails }/>
+                <PrivateRoute authed={this.state.authed} path="/view/:orderId" component={ OrderDetails }/>
                 <Route render={() => <h3>Ooops! Nothing to show here</h3>} />
               </Switch>
             </div>

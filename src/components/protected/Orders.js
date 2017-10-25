@@ -36,7 +36,7 @@ class orderLinkFormatter extends Component{
     const orderId = this.props.value;
     return (
       <div>
-        <a href={`/order/${orderId}`}><strong>{orderId}</strong></a>
+        <a href={`/view/${orderId}`}><strong>{orderId}</strong></a>
       </div>
     );
   }

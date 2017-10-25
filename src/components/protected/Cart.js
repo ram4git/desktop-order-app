@@ -75,7 +75,7 @@ export default class Cart extends Component {
 
   render() {
     const { currentLoad } = this.state;
-    const notificationConfirmLink = <a href={`order/${this.state.notificationOrderId}`} target="_blank"><strong>Take me to Order</strong></a>;
+    const notificationConfirmLink = <a href={`view/${this.state.notificationOrderId}`} target="_blank"><strong>Take me to Order</strong></a>;
     // <Input label={`currentLoad`} placeholder='currentLoad' width={4} onChange={ this.onChangeValue.bind(this, 'currentLoad')} value={currentLoad} />
 
 
@@ -506,9 +506,9 @@ export default class Cart extends Component {
   showNotificationMsg(notificationType, orderId) {
     let msg = '';
     if(notificationType === SUCCESS) {
-      msg = <p>Order <a href={`order/${orderId}`} target="_blank"><strong>{orderId}</strong> </a>   is successfully placed. Check Orders tab for updates </p>;
+      msg = <p>Order <a href={`view/${orderId}`} target="_blank"><strong>{orderId}</strong> </a>   is successfully placed. Check Orders tab for updates </p>;
     } else {
-      msg = <p>Unable to submit order <a href={`order/${orderId}`} target="_blank"><strong>{orderId}</strong></a>. Contact Lalitha Industries. </p>;
+      msg = <p>Unable to submit order <a href={`view/${orderId}`} target="_blank"><strong>{orderId}</strong></a>. Contact Lalitha Industries. </p>;
     }
     this.setState({
       notificationMsg: msg,
