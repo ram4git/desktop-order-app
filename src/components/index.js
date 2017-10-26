@@ -118,7 +118,7 @@ export default class App extends Component {
               </Switch>
             </div>
           </div>
-          <footer>©MRP Solutions</footer>
+          <footer><a href="https://www.facebook.com/MRP-Solutions-193759574448701">©MRP Solutions</a></footer>
         </div>
       </BrowserRouter>
     );
