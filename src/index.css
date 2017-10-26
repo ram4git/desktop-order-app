@@ -316,3 +316,7 @@ td strong {
 .home .ui.image {
   overflow: hidden !important;
 }
+
+.cart .ui.grid>.row {
+  margin: auto;
+}
