@@ -317,6 +317,6 @@ td strong {
   overflow: hidden !important;
 }
 
-.cart .ui.grid>.row {
+.cart .ui.grid .row {
   margin: auto;
 }
