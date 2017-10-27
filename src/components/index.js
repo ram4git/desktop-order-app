@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import 'bootstrap/dist/css/bootstrap.css'
 import 'semantic-ui-css/semantic.min.css';
 import { Route, BrowserRouter, Link, Redirect, Switch } from 'react-router-dom'
 import Login from './Login'
@@ -9,7 +8,7 @@ import Buy from './protected/Buy'
 import Orders from './protected/Orders'
 import Settings from './protected/Settings'
 import OrderDetails from './protected/OrderDetails'
-
+import 'bootstrap/dist/css/bootstrap.css'
 import { logout } from '../helpers/auth'
 import { authRef } from '../config/constants'
 

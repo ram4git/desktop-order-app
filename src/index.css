@@ -192,7 +192,7 @@ footer {
 
 .subAgentOrders .ui.fluid.card {
   background: #ebf0fa;
-  margin: 8px;
+  margin-bottom: 8px;
 }
 
 .currentOrder .extra.content {
@@ -208,6 +208,7 @@ footer {
   flex-direction: column;
   justify-content: center;
   width: 70%;
+  margin: 40px;
 }
 
 .orderSummary img.ui.huge.image {
@@ -219,6 +220,24 @@ footer {
 
 .ui.grid.orderSummaryControls {
   margin-top: 60px !important;
+}
+
+
+.orderSummaryControls .column button.ui.button {
+  font-size: 14px;
+}
+
+.orderSummaryControls .column .ui.search.dropdown {
+  font-size: 14px;
+}
+
+.orderSummaryControls .ui.selection.dropdown .menu>.item {
+  font-size: 14px;
+}
+
+.orderSummaryControls .ui.search.selection.dropdown .text {
+  font-weight: bolder;
+  color: #2980b9;
 }
 
 .orderSummary .bar .progress {

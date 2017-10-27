@@ -111,7 +111,7 @@ export default class Cart extends Component {
             <Grid.Column width={10}>
               <Segment className="currentOrder">
                 <Header as='h5' textAlign='center'>
-                  Current Order
+                  CURRENT ORDER
                 </Header>
                 { this.renderAcceptedOrders() }
               </Segment>
@@ -306,9 +306,7 @@ export default class Cart extends Component {
                 </Card.Description>
               </Card.Content>
               <Card.Content extra>
-                <div className='ui two buttons'>
-                  <Button primary fluid onClick={that.openTheModal.bind(that,orderId, key)}>VIEW</Button>
-                </div>
+                <Button primary fluid onClick={that.openTheModal.bind(that,orderId, key)}>VIEW</Button>
               </Card.Content>
             </Card>
           </div>
