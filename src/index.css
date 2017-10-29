@@ -339,3 +339,35 @@ td strong {
 .cart .ui.grid .row {
   margin: auto;
 }
+
+.buy .products .ui.cards>.card {
+  width: 200px;
+}
+
+.buy .products .ui.cards>.card>.image {
+  background: transparent !important;
+  margin-top: 8px;
+}
+
+.buy .products .ui.segment.productsContainer {
+    background: #ecf0f1;
+}
+
+.addToCart.ui.modal .image.content .description {
+  padding-right: 2em;
+  width: 60%;
+}
+
+.addToCart .ui.image {
+  margin: auto;
+  width: 40% !important;
+}
+
+.addToCart .ui.image img {
+  margin: auto;
+}
+
+.addToCart input[type="number"] {
+  padding: 0 0 !important;
+  font-size: 20px !important;
+}

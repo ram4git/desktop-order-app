@@ -3,6 +3,8 @@ import { Grid, Segment, Input, Confirm } from 'semantic-ui-react'
 import Lorry from './Lorry'
 import { ref } from '../../config/constants'
 import { Header, Card, Table, Modal, Button, Message } from 'semantic-ui-react'
+import Reorder from 'react-reorder'
+
 
 
 
@@ -134,6 +136,7 @@ export default class Cart extends Component {
           { this.renderOrderShopsAndItems(modelOrderData) }
         </Modal.Content>
         <Modal.Actions>
+          <Button secondary content='CLOSE' onClick={ this.closeTheModal.bind(this) } />
           <Button negative content='REJECT' onClick={this.rejectOrder.bind(this,modalOrderId,modelOrderData)} />
           <Button positive icon='checkmark' labelPosition='right' content='ACCEPT' onClick={this.acceptOrder.bind(this,modalOrderId,modelOrderData)} />
         </Modal.Actions>
@@ -341,6 +344,11 @@ export default class Cart extends Component {
     }
     return acceptedOrderShopsList;
   }
+
+  renderOrderShopsAndItems2(orderData) {
+
+  }
+
 
   renderOrderShopsAndItems(orderData) {
     if(!orderData) {

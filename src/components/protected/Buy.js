@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import { Grid, Segment, Statistic, Card } from 'semantic-ui-react'
+import Product from './Product'
+
 
 
 export default class Cart extends Component {
@@ -16,19 +18,22 @@ export default class Cart extends Component {
         <Grid>
           <Grid.Row className="products">
             <Grid.Column>
-              <Segment>{`All products and categories show up here`}</Segment>
+              <Segment className='productsContainer'>
+                <Product />
+              </Segment>
             </Grid.Column>
           </Grid.Row>
         </Grid>
-        <div className="cart">
-          <Segment>
-            { this.renderCartSummary() }
-            { this.renderCartItems() }
-          </Segment>
-        </div>
       </div>
     )
   }
+
+  // <div className="cart">
+  //   <Segment>
+  //     { this.renderCartSummary() }
+  //     { this.renderCartItems() }
+  //   </Segment>
+  // </div>
 
   renderCartSummary() {
     //dummy data
