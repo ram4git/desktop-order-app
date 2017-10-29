@@ -140,19 +140,23 @@ a.navbar-brand {
 }
 
 .lorry .progress .bar{
-  height: 200px !important;
+  height: 100px !important;
+}
+
+.lorry .ui.active.progress .bar {
+  position: relative;
+  min-width: 0.5em;
 }
 
 .lorry .progress{
-  height: 200px !important;
+  height: 100px !important;
 }
 
 
 .segment.lorry .lorry {
-  width: 65%;
+  width: 300px;
   margin: auto;
-  margin-left: 280px;
-  margin-bottom: 120px;
+  margin-left: 160px;
 }
 
 footer {
@@ -211,7 +215,7 @@ footer {
   margin: 40px;
 }
 
-.orderSummary img.ui.huge.image {
+.orderSummary img.ui.image {
   margin: auto !important;
   position: absolute !important;
   z-index: 200;
