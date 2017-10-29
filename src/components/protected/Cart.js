@@ -48,7 +48,7 @@ export default class Cart extends Component {
   fetchSubOrders(mobile) {
     const ordersRef =  `users/${mobile}/suborders`;
     ref.child(ordersRef).once('value', (snap) => {
-      console.log('SUBORDERS', snap.val());
+      //console.log('SUBORDERS', snap.val());
       this.setState({
         subOrders: snap.val()
       });
@@ -299,7 +299,7 @@ export default class Cart extends Component {
   renderSubOrders() {
     const { subOrders } = this.state;
     if(!subOrders || subOrders == null) {
-      return <Message floating content='No sub agent orders!'  color='orange' />;
+      return <Message key='noSubAgentOrder' floating content='No sub agent orders!'  color='orange' />;
     }
 
     const subOrdersList = [];
@@ -335,7 +335,7 @@ export default class Cart extends Component {
     });
     if(!subOrdersList.length) {
       subOrdersList.push(
-        <Message floating content='No sub agent orders!'  color='orange' />
+        <Message floating content='No sub agent orders!'  color='orange' key='subOrderMsg'/>
       );
     }
     return subOrdersList;
@@ -356,7 +356,7 @@ export default class Cart extends Component {
     });
     if(!acceptedOrderShopsList.length) {
       acceptedOrderShopsList.push(
-        <Message color='orange' floating content='No itesms in the cart. View/Accept sub-agent orders on left to place an order to the Factory!' />
+        <Message key='acceptedOrderMsg' color='orange' floating content='No itesms in the cart. View/Accept sub-agent orders on left to place an order to the Factory!' />
       );
     }
     return acceptedOrderShopsList;
@@ -482,7 +482,7 @@ export default class Cart extends Component {
 
 
     newOrder['cart']=mycart;
-    console.log(newOrder);
+    //console.log(newOrder);
 
     var monthsText=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
     var mathRandom = Math.floor((Math.random())*1000);
@@ -543,13 +543,13 @@ export default class Cart extends Component {
   }
 
   deleteSubAgentOrders(myCart) {
-    console.log('deleting subagent orders .....' , this.state);
+    //console.log('deleting subagent orders .....' , this.state);
     const { acceptedOrders } = this.state;
     const mobile = sessionStorage.getItem('mobile');
     acceptedOrders.forEach((order) => {
         let subAgentMobileNumber = order.uid;
         let subAgentOrderId = order.orderId;
-        console.log('deleting subagent orders .....' , subAgentMobileNumber, subAgentOrderId);
+        //console.log('deleting subagent orders .....' , subAgentMobileNumber, subAgentOrderId);
         let mainAgentRef = ref.child('users/' + mobile + '/suborders/' +
                       subAgentMobileNumber + '/' +subAgentOrderId );
             mainAgentRef.remove();
