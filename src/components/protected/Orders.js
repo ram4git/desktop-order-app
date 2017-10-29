@@ -97,8 +97,6 @@ export default class Orders extends Component {
     ];
   }
 
-
-
   componentDidMount() {
     const refPath = `orders`;
     const orders = [];

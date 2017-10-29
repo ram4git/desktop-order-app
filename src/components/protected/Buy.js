@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Grid, Segment, Statistic, Card } from 'semantic-ui-react'
+import { Grid, Segment, Statistic, Card, Message } from 'semantic-ui-react'
 import Product from './Product'
 
 
@@ -15,6 +15,7 @@ export default class Cart extends Component {
     return (
       <div className="buy head">
         <h1>Products</h1>
+        <Message visible className="blink">This page is under construction. DO NOT USE</Message>
         <Grid>
           <Grid.Row className="products">
             <Grid.Column>

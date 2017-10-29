@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button, Grid, Segment, Search, List } from 'semantic-ui-react'
+import { Button, Grid, Segment, Search, List, Message } from 'semantic-ui-react'
 
 
 export default class Settings extends Component {
@@ -7,6 +7,7 @@ export default class Settings extends Component {
     return (
       <div className="settings head">
         <h1>Settings</h1>
+        <Message visible className="blink">This page is under construction. DO NOT USE</Message>
         <Grid>
           <Grid.Row>
             <Grid.Column>
