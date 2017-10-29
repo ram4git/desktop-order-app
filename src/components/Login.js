@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { login, resetPassword } from '../helpers/auth'
+import { login, resetPassword, getUserMobileNumber } from '../helpers/auth'
 import { Button, Label } from 'semantic-ui-react'
 
 
@@ -14,9 +14,12 @@ export default class Login extends Component {
   handleSubmit = (e) => {
     e.preventDefault()
     login(this.email.value, this.pw.value)
+      .then((data) => {
+        getUserMobileNumber(data.uid)
+      })
       .catch((error) => {
-          this.setState(setErrorMsg('Invalid username/password.'))
-        })
+        this.setState(setErrorMsg('Invalid username/password.'))
+      })
   }
   resetPassword = () => {
     resetPassword(this.email.value)

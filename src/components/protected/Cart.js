@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Grid, Segment, Input, Confirm } from 'semantic-ui-react'
 import Lorry from './Lorry'
 import { ref } from '../../config/constants'
+import { onFetchUserMobileNumber } from '../../helpers/auth'
 import { Header, Card, Table, Modal, Button, Message } from 'semantic-ui-react'
 import Reorder from 'react-reorder'
 
@@ -30,7 +31,22 @@ export default class Cart extends Component {
   }
 
   componentDidMount() {
-    const ordersRef =  `users/9849123866/suborders`;
+    const mobile = sessionStorage.getItem('mobile');
+    if(!mobile) {
+      console.log('MOBILE NOT FOUND');
+      onFetchUserMobileNumber().then(data => {
+        console.log('MOBILE FETCHED WITH A CALL',  data.val());
+        const mobile = data.val();
+        this.fetchSubOrders(mobile);
+      });
+    } else {
+      console.log('MOBILE IS ALREADY IN THE SESSION');
+      this.fetchSubOrders(mobile);
+    }
+  }
+
+  fetchSubOrders(mobile) {
+    const ordersRef =  `users/${mobile}/suborders`;
     ref.child(ordersRef).once('value', (snap) => {
       console.log('SUBORDERS', snap.val());
       this.setState({
@@ -50,7 +66,8 @@ export default class Cart extends Component {
               modalOpen: false ,
               subOrders: newSubOrders
     });
-    let deleteOrderRef = ref.child('users/' + '9849123866/' + 'suborders/' + orderData.uid + '/' + orderId);
+    const mobile = sessionStorage.getItem('mobile');
+    let deleteOrderRef = ref.child('users/' + mobile + 'suborders/' + orderData.uid + '/' + orderId);
     deleteOrderRef.remove();
   };
 
@@ -433,10 +450,11 @@ export default class Cart extends Component {
 
   submitOrder(e, data) {
     const { acceptedOrders, currentLoad , lorryCapacity } = this.state;
+    const mobile = sessionStorage.getItem('mobile');
     //TODO
     let now = new Date(); let orderMsg = ""; let uid ='9849123866'; let userName ='Anil';
     let newOrder = {
-      uid : uid,
+      uid : mobile,
       time : now.getTime(),
       userName : userName,
       status : "received",
@@ -527,11 +545,12 @@ export default class Cart extends Component {
   deleteSubAgentOrders(myCart) {
     console.log('deleting subagent orders .....' , this.state);
     const { acceptedOrders } = this.state;
+    const mobile = sessionStorage.getItem('mobile');
     acceptedOrders.forEach((order) => {
         let subAgentMobileNumber = order.uid;
         let subAgentOrderId = order.orderId;
         console.log('deleting subagent orders .....' , subAgentMobileNumber, subAgentOrderId);
-        let mainAgentRef = ref.child('users/' + '9849123866' + '/suborders/' +
+        let mainAgentRef = ref.child('users/' + mobile + '/suborders/' +
                       subAgentMobileNumber + '/' +subAgentOrderId );
             mainAgentRef.remove();
 

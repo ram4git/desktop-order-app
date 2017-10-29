@@ -92,7 +92,7 @@ export default class OrderDetails extends Component {
             </Card.Description>
           </Card.Content>
           <Card.Content extra>
-            <Header as='h5' textAlign='right' inverted>
+            <Header as='h2' textAlign='right' inverted>
             {`₹${shopGrossAmount.toLocaleString('en-IN')}/${totalWeight} qnts`}
           </Header>
           </Card.Content>

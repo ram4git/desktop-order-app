@@ -102,7 +102,8 @@ export default class Orders extends Component {
   componentDidMount() {
     const refPath = `orders`;
     const orders = [];
-    ref.child(refPath).orderByChild('uid').equalTo('9849123866').once('value', (snap) => {
+    const mobile = sessionStorage.getItem('mobile');
+    ref.child(refPath).orderByChild('uid').equalTo(mobile).once('value', (snap) => {
       const orderData = snap.val();
       Object.keys(orderData).forEach(orderId => {
         const { time, status, isSubAgentOrder, cart} = orderData[orderId];
