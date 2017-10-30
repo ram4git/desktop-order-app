@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Image, Icon, Card, Button, Modal, Header, Form } from 'semantic-ui-react'
+import { Image, Card, Button, Modal, Form } from 'semantic-ui-react'
 
 export default class Product extends Component {
 

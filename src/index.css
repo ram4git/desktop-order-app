@@ -221,10 +221,13 @@ footer {
   z-index: 200;
   top: 0; bottom:0; left: 0; right:0;
   transform: scale(.98, .98);
+  margin-top: 60px !important;
 }
 
 .ui.grid.orderSummaryControls {
   margin-top: 60px !important;
+  z-index: 210;
+  opacity: 0.9;
 }
 
 
@@ -264,6 +267,14 @@ footer {
   text-align: center;
   font-weight: bold;
   color: red;
+  position: absolute;
+  top: 10px;
+  left: 0;
+  right: 0;
+}
+
+.orderSummary .splMsg {
+  color: #2980b9;
 }
 
 .blink {
@@ -318,6 +329,18 @@ footer {
   width: 60%;
   margin: auto;
   text-transform: uppercase;
+}
+
+.orderDetails .splMsg {
+  text-align: center;
+}
+
+.orderDetails .splMsg p {
+  padding: 10px 10px;
+  border: 1px solid #ffe066;
+  background: #ffe066;
+  width: 60%;
+  margin: auto;
 }
 
 .fieldAgentOrders h5.ui.center.aligned.header {

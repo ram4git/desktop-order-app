@@ -31,8 +31,12 @@ export function saveUser (user) {
 
 export function getUserMobileNumber(uid) {
   ref.child(`authMobileMap/${uid}`).once('value', (snap) => {
-    console.log('FETCHED MOBILE NUMBER', snap.val());
-    sessionStorage.setItem('mobile', snap.val());
+    const mobile = snap.val();
+    console.log('FETCHED MOBILE NUMBER', mobile);
+    sessionStorage.setItem('mobile', mobile);
+    ref.child(`users/${mobile}/name`).once('value', (name) => {
+      sessionStorage.setItem('name', name.val());
+    });
   });
 }
 

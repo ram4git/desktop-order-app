@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Progress, Image, Button, Grid, Dropdown, Message } from 'semantic-ui-react'
+import { Progress, Image, Button, Grid, Dropdown, Message, Form } from 'semantic-ui-react'
 
 const lorryCapacityOptions = [
     { key: '3', value: 3, text: '3 tons' },
@@ -9,9 +9,16 @@ const lorryCapacityOptions = [
     { key: '21', value: 21, text: '21 tons' }
 ];
 
-const OVERLOAD_FACTOR = 1.1;
+const OVERLOAD_FACTOR = 1.00;
 
 export default class Lorry extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            orderMsg: ''
+        };
+    }
 
 
     render() {
@@ -23,30 +30,49 @@ export default class Lorry extends Component {
           <Image src='/lorry.png' size='large'/>
           <Progress className="lorry" indicating value={currentLoad} total={lorryCapacity} progress='ratio' error={(overload > OVERLOAD_FACTOR) ? true: false}/>
           <Grid className="orderSummaryControls">
-            <Grid.Column width={8}>
+            <Grid.Row>
+              <Grid.Column width={8}>
+                  <Button
+                    content='LORRY CAPACITY'
+                    disabled
+                    primary
+                    width={4}
+                    className='buttonAsLabel'
+                  />
+                  <Dropdown width={4} placeholder='Lorry Capacity' search selection options={lorryCapacityOptions} onChange={this.props.onChange.bind(this)} value={this.props.lorryCapacity}/>
+              </Grid.Column>
+              <Grid.Column width={8}>
                 <Button
-                  content='LORRY CAPACITY'
-                  disabled
-                  primary
-                  width={4}
-                  className='buttonAsLabel'
+                  content='PLACE ORDER'
+                  positive
+                  onClick={this.onSubmit.bind(this)}
+                  fluid
+                  disabled={ (overload > OVERLOAD_FACTOR || overload === 0) ? true : false }
                 />
-                <Dropdown width={4} placeholder='Lorry Capacity' search selection options={lorryCapacityOptions} onChange={this.props.onChange.bind(this)} value={this.props.lorryCapacity}/>
-            </Grid.Column>
-            <Grid.Column width={8}>
-              <Button
-                content='PLACE ORDER'
-                positive
-                onClick={this.props.onSubmit.bind(this)}
-                fluid
-                disabled={ overload > OVERLOAD_FACTOR ? true : false }
-              />
-            </Grid.Column>
-
+              </Grid.Column>
+            </Grid.Row>
+            <Grid.Row>
+                <Grid.Column width={16}>
+                    <Form className='splMsg'>
+                        <Form.TextArea label='SPECIAL MESSAGE' placeholder='Write special instructions to factory...' onChange={this.onSplMsgChange.bind(this)} value={this.state.orderMsg}/>
+                    </Form>
+                </Grid.Column>
+            </Grid.Row>
           </Grid>
         </div>
       );
     }
 
+    onSplMsgChange(e, data) {
+        this.setState({
+            orderMsg: data.value
+        });
+    }
 
+    onSubmit(e, data) {
+      this.props.onSubmit({orderMsg: this.state.orderMsg}, e, data);
+      this.setState({
+        orderMsg: ''
+      });
+    }
 }

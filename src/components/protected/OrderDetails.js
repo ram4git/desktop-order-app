@@ -3,10 +3,7 @@ import { Card, Table, Header, Divider, Loader, Button } from 'semantic-ui-react'
 import moment from 'moment';
 import { ref } from '../../config/constants'
 
-
-
 const LOADING = 'loading';
-const ERROR = 'error';
 
 export default class OrderDetails extends Component {
 
@@ -51,8 +48,17 @@ export default class OrderDetails extends Component {
     );
   }
 
-  renderSpecialMsg() {
-    return null;
+  renderSpecialMsg(orderMsg) {
+    return (
+      orderMsg ?
+      <div className='splMsg'>
+        <Divider />
+        <h5>SPECIAL MESSAGE</h5>
+        <p>{orderMsg}</p>
+      </div>
+      :
+      null
+    );
   }
 
   renderOrderShopsAndItems(orderData) {
@@ -107,7 +113,6 @@ export default class OrderDetails extends Component {
           <Divider />
           <Button fluid>{`Order is ${status}`}</Button>
           <Divider />
-
           <table>
             <tr>
               <td className="key">Total Price<span>:</span></td>

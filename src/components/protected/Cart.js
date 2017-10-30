@@ -362,11 +362,6 @@ export default class Cart extends Component {
     return acceptedOrderShopsList;
   }
 
-  renderOrderShopsAndItems2(orderData) {
-
-  }
-
-
   renderOrderShopsAndItems(orderData) {
     if(!orderData) {
       return null;
@@ -448,13 +443,15 @@ export default class Cart extends Component {
     });
   }
 
-  submitOrder(e, data) {
+  submitOrder( info, e, data) {
     const { acceptedOrders, currentLoad , lorryCapacity } = this.state;
-    const mobile = sessionStorage.getItem('mobile');
+    const uid = sessionStorage.getItem('mobile');
+    const userName = sessionStorage.getItem('name');
     //TODO
-    let now = new Date(); let orderMsg = ""; let uid ='9849123866'; let userName ='Anil';
+    let now = new Date(),
+        orderMsg = info.orderMsg;
     let newOrder = {
-      uid : mobile,
+      uid,
       time : now.getTime(),
       userName : userName,
       status : "received",
