@@ -9,7 +9,7 @@ const lorryCapacityOptions = [
     { key: '21', value: 21, text: '21 tons' }
 ];
 
-
+const OVERLOAD_FACTOR = 1.1;
 
 export default class Lorry extends Component {
 
@@ -19,9 +19,9 @@ export default class Lorry extends Component {
       const overload = currentLoad/lorryCapacity;
       return (
         <div className="orderSummary">
-          {(overload > 1.1) ? <Message visible className="blink">Lorry is overloaded. Use bigger Lorry or Remove items from cart.</Message> : null}
+          {(overload > OVERLOAD_FACTOR) ? <Message visible className="blink">Lorry is overloaded. Use bigger Lorry or Remove items from cart.</Message> : null}
           <Image src='/lorry.png' size='large'/>
-          <Progress className="lorry" indicating value={currentLoad} total={lorryCapacity} progress='ratio'/>
+          <Progress className="lorry" indicating value={currentLoad} total={lorryCapacity} progress='ratio' error={(overload > OVERLOAD_FACTOR) ? true: false}/>
           <Grid className="orderSummaryControls">
             <Grid.Column width={8}>
                 <Button
@@ -39,6 +39,7 @@ export default class Lorry extends Component {
                 positive
                 onClick={this.props.onSubmit.bind(this)}
                 fluid
+                disabled={ overload > OVERLOAD_FACTOR ? true : false }
               />
             </Grid.Column>
 

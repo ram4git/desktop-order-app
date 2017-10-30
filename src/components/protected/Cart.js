@@ -349,7 +349,7 @@ export default class Cart extends Component {
     }
     acceptedOrders.forEach( (acceptedOrder,index) => {
       acceptedOrderShopsList.push(
-        <div className="subAgentOrder">
+        <div className="subAgentOrder" key={index}>
           { this.renderOrderShopsAndItems(acceptedOrder) }
         </div>
       );
