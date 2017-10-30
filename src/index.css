@@ -140,7 +140,7 @@ a.navbar-brand {
 }
 
 .lorry .progress .bar{
-  height: 100px !important;
+  height: 120px !important;
 }
 
 .lorry .ui.active.progress .bar {
@@ -149,14 +149,14 @@ a.navbar-brand {
 }
 
 .lorry .progress{
-  height: 100px !important;
+  height: 120px !important;
 }
 
 
 .segment.lorry .lorry {
   width: 300px;
   margin: auto;
-  margin-left: 160px;
+  margin-right: 162px;
 }
 
 footer {
@@ -219,7 +219,8 @@ footer {
   margin: auto !important;
   position: absolute !important;
   z-index: 200;
-  position: absolute;
+  top: 0; bottom:0; left: 0; right:0;
+  transform: scale(.98, .98);
 }
 
 .ui.grid.orderSummaryControls {
@@ -230,6 +231,11 @@ footer {
 .orderSummaryControls .column button.ui.button {
   font-size: 14px;
 }
+
+.orderSummaryControls .column button.ui.button.buttonAsLabel {
+  opacity: 1 !important;
+}
+
 
 .orderSummaryControls .column .ui.search.dropdown {
   font-size: 14px;

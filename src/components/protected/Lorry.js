@@ -29,6 +29,7 @@ export default class Lorry extends Component {
                   disabled
                   primary
                   width={4}
+                  className='buttonAsLabel'
                 />
                 <Dropdown width={4} placeholder='Lorry Capacity' search selection options={lorryCapacityOptions} onChange={this.props.onChange.bind(this)} value={this.props.lorryCapacity}/>
             </Grid.Column>
