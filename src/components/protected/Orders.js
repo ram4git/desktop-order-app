@@ -35,7 +35,7 @@ class orderLinkFormatter extends Component{
     const orderId = this.props.value;
     return (
       <div>
-        <a href={`/view/${orderId}`}><strong>{orderId}</strong></a>
+        <a href={`/view/${orderId}` target='_blank'}><strong>{orderId}</strong></a>
       </div>
     );
   }
@@ -189,12 +189,6 @@ export default class Orders extends Component {
   }
 
   render () {
-    // iterate over orders in the state and render Table
-    // use react-data-grid
-    // npm install react-data-grid --save
-    // and start using
-
-
     return (
       <ReactDataGrid
         columns={this._columns}

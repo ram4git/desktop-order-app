@@ -404,3 +404,15 @@ td strong {
   padding: 0 0 !important;
   font-size: 20px !important;
 }
+
+.description table td.right.aligned.bigger {
+  font-weight: bold;
+  font-size: 14px;
+  justify-content: center;
+  background: #2ecc71;
+}
+
+.description .ui.cards>.card>.content>.header:not(.ui) {
+  color: #3498db !important;
+  margin: 4px 0;
+}

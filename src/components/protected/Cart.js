@@ -153,7 +153,7 @@ export default class Cart extends Component {
           { this.renderOrderShopsAndItems(modelOrderData) }
         </Modal.Content>
         <Modal.Actions>
-          <Button secondary content='CLOSE' onClick={ this.closeTheModal.bind(this) } />
+          <Button primary content='CLOSE' onClick={ this.closeTheModal.bind(this) } />
           <Button negative content='REJECT' onClick={this.rejectOrder.bind(this,modalOrderId,modelOrderData)} />
           <Button positive icon='checkmark' labelPosition='right' content='ACCEPT' onClick={this.acceptOrder.bind(this,modalOrderId,modelOrderData)} />
         </Modal.Actions>
@@ -385,7 +385,7 @@ export default class Cart extends Component {
             </Card.Description>
           </Card.Content>
           <Card.Content extra>
-            <Header as='h5' textAlign='right' inverted>
+            <Header as='h3' textAlign='right' inverted>
               {`₹${shopGrossAmount.toLocaleString('en-IN')}/${totalWeight} qnts`}
           </Header>
           <Card.Meta textAlign='right'>
@@ -409,7 +409,7 @@ export default class Cart extends Component {
           <Table.Row key={product}>
             <Table.Cell textAlign='left'>{name}</Table.Cell>
             <Table.Cell textAlign='right'>{bags}</Table.Cell>
-            <Table.Cell textAlign='right'>{weight}</Table.Cell>
+            <Table.Cell textAlign='right' className='bigger'>{weight}</Table.Cell>
             <Table.Cell textAlign='right'>{parseFloat(quintalWeightPrice).toLocaleString('en-IN')}(<strong>{discount}</strong>)</Table.Cell>
             <Table.Cell textAlign='right'>{price.toLocaleString('en-IN')}</Table.Cell>
           </Table.Row>
