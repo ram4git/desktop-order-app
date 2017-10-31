@@ -28,7 +28,7 @@ export default class OrderDetails extends Component {
 
   render() {
 
-    if(this.state.orderData.loading) {
+    if(this.state.orderData === LOADING) {
       return <Loader active inline='centered' size='massive'/>;
     }
 
@@ -99,7 +99,7 @@ export default class OrderDetails extends Component {
           </Card.Content>
           <Card.Content extra>
             <Header as='h2' textAlign='right' inverted>
-            {`₹${shopGrossAmount.toLocaleString('en-IN')}/${totalWeight} qnts`}
+            <span className='price'>{`₹${shopGrossAmount.toLocaleString('en-IN')}`}</span><span className='quantity'>{` / ${totalWeight} qnts`}</span>
           </Header>
           </Card.Content>
         </Card>
@@ -124,7 +124,7 @@ export default class OrderDetails extends Component {
             </tr>
             <tr>
               <td className="key">Total Order Weight<span>:</span></td>
-              <td className="value"><strong>{totalWeightInTons}</strong> tons </td>
+              <td className="value"><strong>{totalWeightInTons.toFixed(2)}</strong> tons </td>
             </tr>
             <tr>
               <td className="key">Vehicle Capacity<span>:</span></td>

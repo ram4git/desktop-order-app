@@ -21,7 +21,6 @@ export default class Cart extends Component {
     this.state = {
       lorryCapacity: 17,
       currentLoad: 0,
-      orderId: '17AUG7-ANI984-923',
       subOrders: {},
       mainOrder: {},
       acceptedOrders: [],
@@ -36,8 +35,8 @@ export default class Cart extends Component {
       console.log('MOBILE NOT FOUND');
       onFetchUserMobileNumber().then(data => {
         console.log('MOBILE FETCHED WITH A CALL',  data.val());
-        const mobile = data.val();
-        this.fetchSubOrders(mobile);
+        const fetchedMobile = data.val();
+        this.fetchSubOrders(fetchedMobile);
       });
     } else {
       console.log('MOBILE IS ALREADY IN THE SESSION');

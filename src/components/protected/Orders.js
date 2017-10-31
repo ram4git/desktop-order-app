@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import ReactDataGrid from 'react-data-grid';
 const { Toolbar, Data: { Selectors } } = require('react-data-grid-addons');
+import { Loader } from 'semantic-ui-react';
+import { onFetchUserMobileNumber } from '../../helpers/auth'
+
 
 
 import moment from 'moment';
@@ -35,7 +38,7 @@ class orderLinkFormatter extends Component{
     const orderId = this.props.value;
     return (
       <div>
-        <a href={`/view/${orderId}` target='_blank'}><strong>{orderId}</strong></a>
+        <a href={`/view/${orderId}`} target='_blank'><strong>{orderId}</strong></a>
       </div>
     );
   }
@@ -48,7 +51,8 @@ export default class Orders extends Component {
     super(props);
     this.state = {
       filters: {},
-      rows: []
+      rows: [],
+      loading: true
     };
     this._columns = [
       {
@@ -98,9 +102,24 @@ export default class Orders extends Component {
   }
 
   componentDidMount() {
+    const mobile = sessionStorage.getItem('mobile');
+    if(!mobile) {
+      console.log('MOBILE NOT FOUND');
+      onFetchUserMobileNumber().then(data => {
+        console.log('MOBILE FETCHED WITH A CALL',  data.val());
+        const fetchedMobile = data.val();
+        this.fetchOrders(fetchedMobile);
+      });
+    } else {
+      console.log('MOBILE IS ALREADY IN THE SESSION');
+      this.fetchOrders(mobile);
+    }
+  }
+
+  fetchOrders(mobile) {
     const refPath = `orders`;
     const orders = [];
-    const mobile = sessionStorage.getItem('mobile');
+
     ref.child(refPath).orderByChild('uid').equalTo(mobile).once('value', (snap) => {
       const orderData = snap.val();
       Object.keys(orderData).forEach(orderId => {
@@ -122,8 +141,11 @@ export default class Orders extends Component {
         }
       })
       this.setState({
-        rows: orders
+        rows: orders,
+        loading: false
       });
+      //SORT RECORDS HERE UNTIL WE FIGUORE OUT FIREBASE
+      this.handleGridSort('epochTime','DESC');
     });
   }
 
@@ -183,12 +205,16 @@ export default class Orders extends Component {
 
     };
 
-    const rows = sortDirection === 'NONE' ? this.state.originalRows.slice(0) : this.state.rows.sort(comparer);
+    const rows = sortDirection === 'NONE' ? this.state.rows.slice(0) : this.state.rows.sort(comparer);
 
     this.setState({ rows });
   }
 
   render () {
+    if(this.state.loading) {
+      return <Loader active inline='centered' size='massive'/>;
+    }
+
     return (
       <ReactDataGrid
         columns={this._columns}

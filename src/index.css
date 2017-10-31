@@ -416,3 +416,17 @@ td strong {
   color: #3498db !important;
   margin: 4px 0;
 }
+
+.shopsDetails h2.ui.inverted.right.aligned.header span.price {
+  color: #3498db;
+  font-size: 20px;
+}
+
+.shopsDetails h2.ui.inverted.right.aligned.header span.quantity {
+  color: #34495e;
+}
+
+
+.shopsDetails .ui .content .header {
+  color: #2980b9;
+}
