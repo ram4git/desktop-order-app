@@ -29,11 +29,17 @@ export default class OrderDetails extends Component {
   render() {
 
     if(this.state.orderData === LOADING) {
-      return <Loader active inline='centered' size='massive'/>;
+      return (
+        <div>
+          <a href='/orders'>BACK TO ORDERS</a>
+          <Loader active inline='centered' size='massive'/>
+        </div>
+      );
     }
 
     return (
       <div className="orderDetails">
+        <a href='/orders'>BACK</a>
         { this.renderMainOrder() }
       </div>
     )
