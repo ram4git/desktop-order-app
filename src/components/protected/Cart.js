@@ -144,7 +144,7 @@ export default class Cart extends Component {
     const { modalOrderId, modalOpen, modelOrderData } = this.state;
 
     return (
-      <Modal basic open={modalOpen} onClose={this.closeTheModal.bind(this)}>
+      <Modal basic open={modalOpen} onClose={this.closeTheModal.bind(this)} className="viewModal">
         <Modal.Header>
           Details of order : [ <span className="head">{ modalOrderId }</span> ]
         </Modal.Header>
@@ -369,12 +369,12 @@ export default class Cart extends Component {
     const shops = orderData.cart.shopDetail;
     const shopsList = [];
     shops.forEach((shop, index) => {
-      const { name, mobile, shopGrossAmount,shopDiscountAmount, totalWeight, items } = shop;
+      const { name, mobile, shopGrossAmount,shopDiscountAmount, totalWeight, items, areaId, tin } = shop;
       shopsList.push(
           <Card fluid key={index}>
           <Card.Content>
             <Card.Header>
-              {name}
+              {name}, {areaId}, GST:{tin}
             </Card.Header>
             <Card.Meta>
               {mobile}
@@ -385,10 +385,10 @@ export default class Cart extends Component {
           </Card.Content>
           <Card.Content extra>
             <Header as='h3' textAlign='right' inverted>
-              {`₹${shopGrossAmount.toLocaleString('en-IN')}/${totalWeight} qnts`}
+              <span className="price">{`₹${shopGrossAmount.toLocaleString('en-IN')} `}</span>/<span className="quantity">{ `${totalWeight} qnts`}</span>
           </Header>
-          <Card.Meta textAlign='right'>
-             discount: {`₹${shopDiscountAmount.toLocaleString('en-IN')}`}
+          <Card.Meta textAlign='right' className="discount">
+             <span>discount:</span><span className="quantity">{`₹${shopDiscountAmount.toLocaleString('en-IN')}`}</span>
           </Card.Meta>
           </Card.Content>
         </Card>

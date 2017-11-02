@@ -426,7 +426,27 @@ td strong {
   color: #34495e;
 }
 
-
 .shopsDetails .ui .content .header {
   color: #2980b9;
+}
+
+.viewModal .header {
+  color: orange !important;
+}
+
+.viewModal .content .header {
+  color: #2980b9 !important;
+}
+
+.viewModal .content span.price {
+  font-size: 20px;
+}
+
+.viewModal .content span.quantity {
+  color: #34495e;
+}
+
+.viewModal .content .meta.discount {
+  font-size: 12px;
+  margin-top: -10px;
 }
