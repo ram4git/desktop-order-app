@@ -9,7 +9,7 @@ import Orders from './protected/Orders'
 import Settings from './protected/Settings'
 import OrderDetails from './protected/OrderDetails'
 import 'bootstrap/dist/css/bootstrap.css'
-import { logout } from '../helpers/auth'
+import { logout, getUserMobileNumber } from '../helpers/auth'
 import { authRef } from '../config/constants'
 
 function PrivateRoute ({component: Component, authed, ...rest}) {
@@ -45,14 +45,16 @@ export default class App extends Component {
         this.setState({
           authed: true,
           loading: false,
-        })
+        });
+        getUserMobileNumber(user.uid);
       } else {
         this.setState({
           authed: false,
           loading: false
         })
       }
-    })
+    });
+
   }
   componentWillUnmount () {
     this.removeListener()
