@@ -82,6 +82,7 @@ a.navbar-brand {
 
 .row.items .segment{
   min-height: 600px;
+  padding-bottom: 20px;
 }
 
 .head h1 {
@@ -287,6 +288,7 @@ footer {
 
 .orderDetails .currentOrder .subAgentOrder {
   padding: 8px 0;
+  margin-top: 10px;
 }
 
 .orderDetails .summary td.value {
@@ -449,4 +451,32 @@ td strong {
 .viewModal .content .meta.discount {
   font-size: 12px;
   margin-top: -10px;
+}
+
+.viewModal .sequence {
+  display: none;
+}
+
+.currentOrder .content .header {
+  color: #2980b9 !important;
+}
+
+.currentOrder .content span.price {
+  font-size: 20px;
+}
+
+.currentOrder .content span.quantity {
+  color: #34495e;
+}
+
+.currentOrder .content .meta.discount {
+  font-size: 12px;
+  margin-top: -10px;
+}
+
+.helpText {
+  position: absolute;
+  bottom: 0px;
+  margin: 4px 10px;
+  color: #34495e;
 }

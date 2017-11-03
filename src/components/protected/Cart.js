@@ -2,8 +2,8 @@ import React, { Component } from 'react'
 import { Grid, Segment, Input, Confirm } from 'semantic-ui-react'
 import Lorry from './Lorry'
 import { ref } from '../../config/constants'
-import { onFetchUserMobileNumber } from '../../helpers/auth'
-import { Header, Card, Table, Modal, Button, Message } from 'semantic-ui-react'
+import { onFetchUserMobileNumber, getUserMobileNumber } from '../../helpers/auth'
+import { Header, Card, Table, Modal, Button, Message, Label, Icon } from 'semantic-ui-react'
 import Reorder from 'react-reorder'
 
 
@@ -25,7 +25,8 @@ export default class Cart extends Component {
       mainOrder: {},
       acceptedOrders: [],
       notificationOpen: false,
-      notificationMsg: {}
+      notificationMsg: {},
+      orderedShops: []
     };
   }
 
@@ -71,19 +72,22 @@ export default class Cart extends Component {
   };
 
   acceptOrder = (orderId, orderData) => {
-    const { acceptedOrders, subOrders, subAgentMobile, currentLoad } = this.state;
+    const { acceptedOrders, subOrders, subAgentMobile, currentLoad, orderedShops } = this.state;
     const newAcceptedOrders = [...acceptedOrders];
+    const newOrderedShops = [...orderedShops, ...orderData.cart.shopDetail];
     orderData.orderId=orderId;
     newAcceptedOrders.push(orderData);
     const {...newSubOrders} = subOrders;
     delete newSubOrders[subAgentMobile][orderId];
     const newLoad = currentLoad + (orderData.cart.totalWeight)/10;
 //    const {[orderId]: ignore, ...newSubAgentOrders} = newSubOrders[subAgentMobile];
+
     this.setState({
         acceptedOrders: newAcceptedOrders,
         modalOpen: false,
         subOrders: newSubOrders,
-        currentLoad : newLoad
+        currentLoad : newLoad,
+        orderedShops: newOrderedShops
     });
   };
 
@@ -132,6 +136,9 @@ export default class Cart extends Component {
                   CURRENT ORDER
                 </Header>
                 { this.renderAcceptedOrders() }
+                <div className='helpText'>
+                  <Icon name='pointing right' />Lorry will be loaded in the same order as above. Last item will be unloaded first
+                </div>
               </Segment>
             </Grid.Column>
           </Grid.Row>
@@ -341,24 +348,85 @@ export default class Cart extends Component {
   }
 
   renderAcceptedOrders() {
-    const { acceptedOrders } = this.state;
+    const { acceptedOrders, orderedShops } = this.state;
     const acceptedOrderShopsList = [];
     if(!acceptedOrders) {
       return null;
     }
-    acceptedOrders.forEach( (acceptedOrder,index) => {
-      acceptedOrderShopsList.push(
-        <div className="subAgentOrder" key={index}>
-          { this.renderOrderShopsAndItems(acceptedOrder) }
-        </div>
-      );
-    });
-    if(!acceptedOrderShopsList.length) {
+
+    acceptedOrderShopsList.push(
+      <div className="subAgentOrder">
+        { this.renderShops() }
+      </div>
+    );
+
+    if(!orderedShops.length) {
       acceptedOrderShopsList.push(
         <Message key='acceptedOrderMsg' color='orange' floating content='No itesms in the cart. View/Accept sub-agent orders on left to place an order to the Factory!' />
       );
     }
     return acceptedOrderShopsList;
+  }
+
+  renderShops() {
+    const { orderedShops } = this.state;
+    const totalShops = orderedShops.length;
+    const shopsList = [];
+    orderedShops.forEach((shop, index) => {
+      const { name, mobile, shopGrossAmount,shopDiscountAmount, totalWeight, items, areaId, tin } = shop;
+      shopsList.push(
+          <Card fluid key={index}>
+            <Card.Content>
+              <Card.Header>
+                {name}, {areaId}, GST:{tin}
+              </Card.Header>
+              <Card.Meta>
+                {mobile}
+              </Card.Meta>
+              <Card.Description>
+                { this.renderItemsTable(items) }
+              </Card.Description>
+            </Card.Content>
+            <Card.Content extra>
+              <Header as='h3' textAlign='right' inverted>
+                <span className="price">{`₹${shopGrossAmount.toLocaleString('en-IN')} `}</span>/<span className="quantity">{ `${totalWeight} qnts`}</span>
+            </Header>
+            <Card.Meta textAlign='right' className="discount">
+              <Button.Group floated='left' className="sequence">
+                <Button color='black'>
+                  <Icon name='hashtag' /> {index + 1}
+                </Button>
+                { (index + 1) !== totalShops
+                  ? <Button animated secondary onClick={this.swapShops.bind(this, index, index + 1)}>
+                      <Icon name='arrow down' size='big' color='white'/>
+                    </Button>
+                  : null
+                }
+                { index !== 0
+                  ? <Button animated secondary onClick={this.swapShops.bind(this, index, index - 1)}>
+                      <Icon name='arrow up' size='big' color='white'/>
+                    </Button>
+                  : null
+                }
+              </Button.Group>
+              <span>discount:</span><span className="quantity">{`₹${shopDiscountAmount.toLocaleString('en-IN')}`}</span>
+            </Card.Meta>
+          </Card.Content>
+        </Card>
+      )
+    });
+    return shopsList;
+  }
+
+  swapShops(fromIndex, toIndex) {
+    const { orderedShops } = this.state;
+    const newOrderedShops = [ ...orderedShops];
+    const temp = newOrderedShops[fromIndex];
+    newOrderedShops[fromIndex] = newOrderedShops[toIndex];
+    newOrderedShops[toIndex] = temp;
+    this.setState({
+      orderedShops: newOrderedShops
+    });
   }
 
   renderOrderShopsAndItems(orderData) {
@@ -372,24 +440,36 @@ export default class Cart extends Component {
       const { name, mobile, shopGrossAmount,shopDiscountAmount, totalWeight, items, areaId, tin } = shop;
       shopsList.push(
           <Card fluid key={index}>
-          <Card.Content>
-            <Card.Header>
-              {name}, {areaId}, GST:{tin}
-            </Card.Header>
-            <Card.Meta>
-              {mobile}
+            <Card.Content>
+              <Card.Header>
+                {name}, {areaId}, GST:{tin}
+              </Card.Header>
+              <Card.Meta>
+                {mobile}
+              </Card.Meta>
+              <Card.Description>
+                { this.renderItemsTable(items) }
+              </Card.Description>
+            </Card.Content>
+            <Card.Content extra>
+              <Header as='h3' textAlign='right' inverted>
+                <span className="price">{`₹${shopGrossAmount.toLocaleString('en-IN')} `}</span>/<span className="quantity">{ `${totalWeight} qnts`}</span>
+            </Header>
+            <Card.Meta textAlign='right' className="discount">
+              <Button.Group floated='left' className="sequence">
+                <Button color='black'>
+                  <Icon name='hashtag' /> {index + 1}
+                </Button>
+                <Button animated secondary>
+                  <Icon name='arrow down' size='big' color='white'/>
+                </Button>
+                <Button animated secondary>
+                  <Icon name='arrow up' size='big' color='white'/>
+                </Button>
+              </Button.Group>
+
+              <span>discount:</span><span className="quantity">{`₹${shopDiscountAmount.toLocaleString('en-IN')}`}</span>
             </Card.Meta>
-            <Card.Description>
-              { this.renderItemsTable(items) }
-            </Card.Description>
-          </Card.Content>
-          <Card.Content extra>
-            <Header as='h3' textAlign='right' inverted>
-              <span className="price">{`₹${shopGrossAmount.toLocaleString('en-IN')} `}</span>/<span className="quantity">{ `${totalWeight} qnts`}</span>
-          </Header>
-          <Card.Meta textAlign='right' className="discount">
-             <span>discount:</span><span className="quantity">{`₹${shopDiscountAmount.toLocaleString('en-IN')}`}</span>
-          </Card.Meta>
           </Card.Content>
         </Card>
       )
@@ -473,8 +553,9 @@ export default class Cart extends Component {
       mycart.discount_amount += cart.discount_amount;
       mycart.grossPrice += cart.grossPrice;
       mycart.totalPrice += cart.totalPrice;
-      mycart.shopDetail= mycart.shopDetail.concat(cart.shopDetail);
+      //mycart.shopDetail= mycart.shopDetail.concat(cart.shopDetail);
     });
+    mycart.shopDetail = this.state.orderedShops;
 
 
     newOrder['cart']=mycart;

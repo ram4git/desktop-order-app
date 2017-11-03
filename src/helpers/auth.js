@@ -44,3 +44,7 @@ export function onFetchUserMobileNumber() {
   const uid = authRef().currentUser.uid;
   return ref.child(`authMobileMap/${uid}`).once('value')
 }
+
+export function onFetchMobileUserName(mobile) {
+  return ref.child(`users/${mobile}/name`).once('value')
+}
