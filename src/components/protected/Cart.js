@@ -195,7 +195,7 @@ export default class Cart extends Component {
     const ordersRef =  ref.child(`orders/${modalOrderId}`);
 
     ordersRef.on('value', (data) => {
-      console.log('modelOrderData=', data.val());
+      //console.log('modelOrderData=', data.val());
       const orderData = data.val();
       this.updatePrices(orderData, 'modelOrderData');
     });
@@ -211,7 +211,6 @@ export default class Cart extends Component {
   }
 
   calculateDiscount(orderData, priceList, stateProp) {
-    console.log("BEFORE DISCOUNTS", orderData);
     const shopArray = orderData.cart.shopDetail;
     orderData.cart.discount_amount = 0;
 
@@ -306,9 +305,8 @@ export default class Cart extends Component {
           shop['shopDiscountAmount'] = shopDiscountAmount;
           shop['shopGrossAmount'] = shop['totalShopPrice'] - shopDiscountAmount;
           if(itemsProcessed == shopArray.length) {
-            console.log('order data = = = ' , orderData);
+            //console.log('order data = = = ' , orderData);
             orderData.cart.discount_amount = totaldiscountedPrice;
-            console.log("AFTER DISCOUNT CALC", orderData);
             that.setState({
               [stateProp]: orderData,
               modalLoading: false
@@ -584,7 +582,7 @@ export default class Cart extends Component {
       currentItem['bags'] = e.target.value*bagsToWeightRation;
     }
     currentItem['price'] = currentItem['weight']*quintalWeightPrice;
-    console.log(currentItem);
+    //console.log(currentItem);
     const shop = newOrderedShops[shopIndex];
     const { totalWeight, totalPrice } = this.getTotalPriceAndWeight(shop.items);
     shop.totalWeight = totalWeight;
