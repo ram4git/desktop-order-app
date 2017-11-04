@@ -3,7 +3,7 @@ import { Grid, Segment, Input, Confirm } from 'semantic-ui-react'
 import Lorry from './Lorry'
 import { ref } from '../../config/constants'
 import { onFetchUserMobileNumber, getUserMobileNumber } from '../../helpers/auth'
-import { Header, Card, Table, Modal, Button, Message, Label, Icon } from 'semantic-ui-react'
+import { Header, Card, Table, Modal, Button, Message, Label, Icon, Loader } from 'semantic-ui-react'
 import Reorder from 'react-reorder'
 
 
@@ -13,7 +13,7 @@ import Reorder from 'react-reorder'
 // 22SEP7-ANI984-475
 // 9849123866 - mobile number for testing
 //  Shopwise statistic for
-const SUCCESS = 'SUCCESS', ERROR = 'ERROR';
+const SUCCESS = 'SUCCESS', ERROR = 'ERROR', VIEW_MODE = 'VIEW', EDIT_MODE = 'EDIT';
 
 export default class Cart extends Component {
   constructor(props) {
@@ -26,7 +26,15 @@ export default class Cart extends Component {
       acceptedOrders: [],
       notificationOpen: false,
       notificationMsg: {},
-      orderedShops: []
+      mutatedOrderData: {
+        cart: {
+          discount_amount: 0,
+          grossPrice: 0,
+          shopDetail: [],
+          totalPrice: 0,
+          totalWeight: 0
+        }
+      }
     };
   }
 
@@ -56,15 +64,15 @@ export default class Cart extends Component {
   }
 
 
-  openTheModal = (orderId, subAgentMobile) => this.setState({ modalOpen: true, modalOrderId: orderId, subAgentMobile }, this.fetchOrder);
+  openTheModal = (orderId, subAgentMobile) => this.setState({ modalOpen: true, modalOrderId: orderId, subAgentMobile, modalLoading: true }, this.fetchOrder);
   closeTheModal = () => this.setState({modalOpen:false});
   rejectOrder = (orderId, orderData) => {
     const { subOrders } = this.state;
     const {...newSubOrders} = subOrders;
     delete newSubOrders[orderData.uid][orderId];
     this.setState({
-              modalOpen: false ,
-              subOrders: newSubOrders
+      modalOpen: false ,
+      subOrders: newSubOrders
     });
     const mobile = sessionStorage.getItem('mobile');
     let deleteOrderRef = ref.child('users/' + mobile + 'suborders/' + orderData.uid + '/' + orderId);
@@ -72,22 +80,31 @@ export default class Cart extends Component {
   };
 
   acceptOrder = (orderId, orderData) => {
-    const { acceptedOrders, subOrders, subAgentMobile, currentLoad, orderedShops } = this.state;
+    const { acceptedOrders, subOrders, subAgentMobile, currentLoad, mutatedOrderData } = this.state;
     const newAcceptedOrders = [...acceptedOrders];
-    const newOrderedShops = [...orderedShops, ...orderData.cart.shopDetail];
+    const newMutatedOrderData = { ...mutatedOrderData };
+
+    //merge two orders
+    const newCart = newMutatedOrderData.cart;
+    newCart['discount_amount'] = orderData.cart.discount_amount + mutatedOrderData.cart.discount_amount;
+    newCart['grossPrice'] = orderData.cart.grossPrice + mutatedOrderData.cart.grossPrice;
+    newCart['totalPrice'] = orderData.cart.totalPrice + mutatedOrderData.cart.totalPrice;
+    newCart['totalWeight'] = orderData.cart.totalWeight + mutatedOrderData.cart.totalWeight;
+    newCart.shopDetail = [...newCart.shopDetail, ...orderData.cart.shopDetail];
+
     orderData.orderId=orderId;
     newAcceptedOrders.push(orderData);
     const {...newSubOrders} = subOrders;
     delete newSubOrders[subAgentMobile][orderId];
     const newLoad = currentLoad + (orderData.cart.totalWeight)/10;
-//    const {[orderId]: ignore, ...newSubAgentOrders} = newSubOrders[subAgentMobile];
+    //const {[orderId]: ignore, ...newSubAgentOrders} = newSubOrders[subAgentMobile];
 
     this.setState({
-        acceptedOrders: newAcceptedOrders,
-        modalOpen: false,
-        subOrders: newSubOrders,
-        currentLoad : newLoad,
-        orderedShops: newOrderedShops
+      acceptedOrders: newAcceptedOrders,
+      modalOpen: false,
+      subOrders: newSubOrders,
+      currentLoad : newLoad,
+      mutatedOrderData: newMutatedOrderData
     });
   };
 
@@ -148,7 +165,10 @@ export default class Cart extends Component {
   };
 
   renderViewOrderModal() {
-    const { modalOrderId, modalOpen, modelOrderData } = this.state;
+    const { modalOrderId, modalOpen, modelOrderData, modalLoading } = this.state;
+    if(modalLoading) {
+      return <Loader active inline='centered' size='massive'/>
+    }
 
     return (
       <Modal basic open={modalOpen} onClose={this.closeTheModal.bind(this)} className="viewModal">
@@ -177,29 +197,28 @@ export default class Cart extends Component {
     ordersRef.on('value', (data) => {
       console.log('modelOrderData=', data.val());
       const orderData = data.val();
-      this.updatePrices(orderData);
-
+      this.updatePrices(orderData, 'modelOrderData');
     });
   }
 
 
-  updatePrices(orderData) {
+  updatePrices(orderData, stateProp) {
     const pricesRef = ref.child(`priceList`);
     pricesRef.on('value', (data) => {
       let priceList = data.val();
-      this.calculateDiscount(orderData, priceList);
+      this.calculateDiscount(orderData, priceList, stateProp);
     });
-
   }
 
-  calculateDiscount(orderData , priceList) {
+  calculateDiscount(orderData, priceList, stateProp) {
+    console.log("BEFORE DISCOUNTS", orderData);
     const shopArray = orderData.cart.shopDetail;
     orderData.cart.discount_amount = 0;
 
     let totaldiscountedPrice = 0; let itemsProcessed = 0;
 
     const that = this;
-    shopArray.forEach(function(shop){
+    shopArray.forEach( shop => {
 
     var shopDiscountAmount = 0;
 
@@ -209,97 +228,95 @@ export default class Cart extends Component {
     var brokenObjectOrg = items.broken;
     var shopRiceWeight = 0;var shopRavvaWeight = 0; var shopBrokenWeight= 0;
     for(var productId in riceObjectOrg){
-        shopRiceWeight += riceObjectOrg[productId].weight;
+        shopRiceWeight += parseFloat(riceObjectOrg[productId].weight);
     }
     for(var productId in ravvaObjectOrg){
-        shopRavvaWeight += ravvaObjectOrg[productId].weight;
+        shopRavvaWeight += parseFloat(ravvaObjectOrg[productId].weight);
     }
     for(var productId in brokenObjectOrg){
-        shopBrokenWeight += brokenObjectOrg[productId].weight;
+        shopBrokenWeight += parseFloat(brokenObjectOrg[productId].weight);
     }
     var ricediscount=0, ravvadiscount=0,brokendiscount=0;
 
     var areasRef = ref.child('areas/' + shop.areaId );
     var riceDiscArray = [];var ravvaDiscArray = []; var brokenDiscArray=[];
-   (function() {
+    (
+      function() {
 
-       var ravvaObject = ravvaObjectOrg ? JSON.parse(JSON.stringify(ravvaObjectOrg)) : {};
-       var riceObject = riceObjectOrg ? JSON.parse(JSON.stringify(riceObjectOrg)): {};
-       var brokenObject = brokenObjectOrg ? JSON.parse(JSON.stringify(brokenObjectOrg)): {};
+        var ravvaObject = ravvaObjectOrg ? JSON.parse(JSON.stringify(ravvaObjectOrg)) : {};
+        var riceObject = riceObjectOrg ? JSON.parse(JSON.stringify(riceObjectOrg)): {};
+        var brokenObject = brokenObjectOrg ? JSON.parse(JSON.stringify(brokenObjectOrg)): {};
 
-    areasRef.once('value', function(data){
-
-        itemsProcessed++;
-        var discounts = data.val().discounts;
-      //  console.log(discounts);
-        if(discounts) {
+        areasRef.once('value', (data)=> {
+          itemsProcessed++;
+          var discounts = data.val().discounts;
+          if(discounts) {
             riceDiscArray = discounts.rice || riceDiscArray ;
             ravvaDiscArray = discounts.ravva ||  ravvaDiscArray;
             brokenDiscArray = discounts.broken || brokenDiscArray;
-        }
+          }
 
-        riceDiscArray.forEach(function(entry){
-        if(shopRiceWeight >= entry.quintals){
-            ricediscount = entry.discount;
-        }
-        });
+          riceDiscArray.forEach((entry) => {
+            if(shopRiceWeight >= entry.quintals){
+              ricediscount = entry.discount;
+            }
+          });
 
-     ravvaDiscArray.forEach(function(entry){
-        if(shopRavvaWeight >= entry.quintals){
-            ravvadiscount = entry.discount;
-        }
-        });
+          ravvaDiscArray.forEach((entry) => {
+            if(shopRavvaWeight >= entry.quintals){
+              ravvadiscount = entry.discount;
+            }
+          });
 
-     brokenDiscArray.forEach(function(entry){
-        if(shopBrokenWeight >= entry.quintals){
-            brokendiscount = entry.discount;
-        }
-        });
-        let areaId = shop.areaId ;
+          brokenDiscArray.forEach((entry) => {
+            if(shopBrokenWeight >= entry.quintals){
+              brokendiscount = entry.discount;
+            }
+          });
 
-     for(var productId in riceObject){
-           riceObject[productId].quintalWeightPrice=priceList[areaId]['rice'][productId]['Agent'];
-           riceObject[productId]['discountedQuintalPrice']=  riceObject[productId].quintalWeightPrice - ricediscount;
-           riceObject[productId]['price']= riceObject[productId].discountedQuintalPrice * riceObject[productId]['weight'];
-           shopDiscountAmount += ricediscount*riceObject[productId]['weight'];
-           totaldiscountedPrice += ricediscount*riceObject[productId]['weight']
-    }
-    for(var productId in ravvaObject){
+          let areaId = shop.areaId ;
+
+          for(var productId in riceObject){
+            riceObject[productId].quintalWeightPrice=priceList[areaId]['rice'][productId]['Agent'];
+            riceObject[productId]['discountedQuintalPrice']=  riceObject[productId].quintalWeightPrice - ricediscount;
+            riceObject[productId]['price']= riceObject[productId].discountedQuintalPrice * riceObject[productId]['weight'];
+            shopDiscountAmount += ricediscount*riceObject[productId]['weight'];
+            totaldiscountedPrice += ricediscount*riceObject[productId]['weight']
+          }
+          for(var productId in ravvaObject){
             ravvaObject[productId].quintalWeightPrice=priceList[areaId]['ravva'][productId]['Agent'];
             ravvaObject[productId]['discountedQuintalPrice']= ravvaObject[productId].quintalWeightPrice - ravvadiscount;
             ravvaObject[productId]['price']= ravvaObject[productId].discountedQuintalPrice * ravvaObject[productId]['weight']
             shopDiscountAmount += ravvadiscount*ravvaObject[productId]['weight'];
             totaldiscountedPrice += ravvadiscount*ravvaObject[productId]['weight'];
-    }
+          }
 
-    for(var productId in brokenObject){
+          for(var productId in brokenObject){
             brokenObject[productId].quintalWeightPrice=priceList[areaId]['broken'][productId]['Agent'];
             brokenObject[productId]['discountedQuintalPrice']=  brokenObject[productId].quintalWeightPrice - brokendiscount;
             brokenObject[productId]['price']= brokenObject[productId].discountedQuintalPrice * brokenObject[productId]['weight']
             shopDiscountAmount += brokendiscount*brokenObject[productId]['weight'];
             totaldiscountedPrice += brokendiscount*brokenObject[productId]['weight'];
-    }
+          }
 
-    shop['items']['rice'] = riceObject;
-    shop['items']['ravva'] = ravvaObject;
-    shop['items']['broken'] = brokenObject;
+          shop['items']['rice'] = riceObject;
+          shop['items']['ravva'] = ravvaObject;
+          shop['items']['broken'] = brokenObject;
 
-    shop['shopDiscountAmount'] = shopDiscountAmount;
-    shop['shopGrossAmount'] = shop['totalShopPrice'] - shopDiscountAmount;
-    if(itemsProcessed == shopArray.length) {
-      console.log('order data = = = ' , orderData);
-      orderData.cart.discount_amount = totaldiscountedPrice;
-      that.setState({
-        modelOrderData: orderData
-      })
-    }
-})
-    }());
-
-
-});
-
-
+          shop['shopDiscountAmount'] = shopDiscountAmount;
+          shop['shopGrossAmount'] = shop['totalShopPrice'] - shopDiscountAmount;
+          if(itemsProcessed == shopArray.length) {
+            console.log('order data = = = ' , orderData);
+            orderData.cart.discount_amount = totaldiscountedPrice;
+            console.log("AFTER DISCOUNT CALC", orderData);
+            that.setState({
+              [stateProp]: orderData,
+              modalLoading: false
+            })
+          }
+        })
+      }());
+    });
   }
 
   renderSubOrders() {
@@ -348,14 +365,16 @@ export default class Cart extends Component {
   }
 
   renderAcceptedOrders() {
-    const { acceptedOrders, orderedShops } = this.state;
-    const acceptedOrderShopsList = [];
+
+    const { acceptedOrders, mutatedOrderData={} } = this.state;
     if(!acceptedOrders) {
       return null;
     }
+    const orderedShops = mutatedOrderData.cart ? mutatedOrderData.cart.shopDetail : [];
+    const acceptedOrderShopsList = [];
 
     acceptedOrderShopsList.push(
-      <div className="subAgentOrder">
+      <div className="subAgentOrder" key={1}>
         { this.renderShops() }
       </div>
     );
@@ -369,7 +388,8 @@ export default class Cart extends Component {
   }
 
   renderShops() {
-    const { orderedShops } = this.state;
+    const { mutatedOrderData={} } = this.state;
+    const orderedShops = mutatedOrderData.cart ? mutatedOrderData.cart.shopDetail : [];
     const totalShops = orderedShops.length;
     const shopsList = [];
     orderedShops.forEach((shop, index) => {
@@ -384,13 +404,13 @@ export default class Cart extends Component {
                 {mobile}
               </Card.Meta>
               <Card.Description>
-                { this.renderItemsTable(items) }
+                { this.renderItemsTable(index, items, EDIT_MODE) }
               </Card.Description>
             </Card.Content>
             <Card.Content extra>
               <Header as='h3' textAlign='right' inverted>
                 <span className="price">{`₹${shopGrossAmount.toLocaleString('en-IN')} `}</span>/<span className="quantity">{ `${totalWeight} qnts`}</span>
-            </Header>
+              </Header>
             <Card.Meta textAlign='right' className="discount">
               <Button.Group floated='left' className="sequence">
                 <Button color='black'>
@@ -398,13 +418,13 @@ export default class Cart extends Component {
                 </Button>
                 { (index + 1) !== totalShops
                   ? <Button animated secondary onClick={this.swapShops.bind(this, index, index + 1)}>
-                      <Icon name='arrow down' size='big' color='white'/>
+                      <Icon name='arrow down' size='big'/>
                     </Button>
                   : null
                 }
                 { index !== 0
                   ? <Button animated secondary onClick={this.swapShops.bind(this, index, index - 1)}>
-                      <Icon name='arrow up' size='big' color='white'/>
+                      <Icon name='arrow up' size='big'/>
                     </Button>
                   : null
                 }
@@ -419,13 +439,17 @@ export default class Cart extends Component {
   }
 
   swapShops(fromIndex, toIndex) {
-    const { orderedShops } = this.state;
+    const { mutatedOrderData } = this.state;
+    const orderedShops = mutatedOrderData.cart.shopDetail;
     const newOrderedShops = [ ...orderedShops];
     const temp = newOrderedShops[fromIndex];
     newOrderedShops[fromIndex] = newOrderedShops[toIndex];
     newOrderedShops[toIndex] = temp;
+
+    const newMutatedOrderData = { ...mutatedOrderData };
+    newMutatedOrderData.cart.shopDetail = newOrderedShops;
     this.setState({
-      orderedShops: newOrderedShops
+      mutatedOrderData: newMutatedOrderData
     });
   }
 
@@ -448,7 +472,7 @@ export default class Cart extends Component {
                 {mobile}
               </Card.Meta>
               <Card.Description>
-                { this.renderItemsTable(items) }
+                { this.renderItemsTable(index, items) }
               </Card.Description>
             </Card.Content>
             <Card.Content extra>
@@ -461,10 +485,10 @@ export default class Cart extends Component {
                   <Icon name='hashtag' /> {index + 1}
                 </Button>
                 <Button animated secondary>
-                  <Icon name='arrow down' size='big' color='white'/>
+                  <Icon name='arrow down' size='big'/>
                 </Button>
                 <Button animated secondary>
-                  <Icon name='arrow up' size='big' color='white'/>
+                  <Icon name='arrow up' size='big'/>
                 </Button>
               </Button.Group>
 
@@ -477,7 +501,7 @@ export default class Cart extends Component {
     return shopsList;
   }
 
-  renderItemsTable(items) {
+  renderItemsTable(shopIndex, items, mode) {
     const itemsArray = [];
     Object.keys(items).forEach( productType => {
       const productTypeItems = items[productType];
@@ -487,14 +511,18 @@ export default class Cart extends Component {
         itemsArray.push(
           <Table.Row key={product}>
             <Table.Cell textAlign='left'>{name}</Table.Cell>
-            <Table.Cell textAlign='right'>{bags}</Table.Cell>
-            <Table.Cell textAlign='right' className='bigger'>{weight}</Table.Cell>
+            <Table.Cell textAlign='center'>
+              { this.renderValueEditControls(mode, 'bags', bags, shopIndex, productType, product) }
+            </Table.Cell>
+            <Table.Cell textAlign='center' className='bigger'>
+              { this.renderValueEditControls(mode, 'weight', weight, shopIndex, productType, product) }
+            </Table.Cell>
             <Table.Cell textAlign='right'>{parseFloat(quintalWeightPrice).toLocaleString('en-IN')}(<strong>{discount}</strong>)</Table.Cell>
             <Table.Cell textAlign='right'>{price.toLocaleString('en-IN')}</Table.Cell>
           </Table.Row>
         )
       })
-    })
+    });
 
 
     return (
@@ -502,8 +530,8 @@ export default class Cart extends Component {
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell textAlign='left'>Product</Table.HeaderCell>
-            <Table.HeaderCell textAlign='right'>Bags</Table.HeaderCell>
-            <Table.HeaderCell textAlign='right'>Qnts</Table.HeaderCell>
+            <Table.HeaderCell textAlign='center'>Bags</Table.HeaderCell>
+            <Table.HeaderCell textAlign='center'>Qnts</Table.HeaderCell>
             <Table.HeaderCell textAlign='right'>Qnt Price(disc)</Table.HeaderCell>
             <Table.HeaderCell textAlign='right'>Total Price</Table.HeaderCell>
           </Table.Row>
@@ -513,6 +541,89 @@ export default class Cart extends Component {
         </Table.Body>
       </Table>
     );
+  }
+
+  // <Button.Group floated='left' className="sequence">
+  //   <Button>
+  //     <Icon name='plus'/>
+  //   </Button>
+  //   <Button className='number'>
+  //     <Input value={value} type='number'/>
+  //   </Button>
+  //   <Button>
+  //     <Icon name='minus'/>
+  //   </Button>
+  // </Button.Group>
+
+  renderValueEditControls(mode, valueType, value, shopIndex, productType, itemIndex) {
+    if(mode === EDIT_MODE) {
+      return (
+        <Label as='div' className='numberEdit'>
+          <Input size='big' className='number' type='number' value={value} onChange={this.onChangeNumber.bind(this, shopIndex, productType, itemIndex, valueType)}/>
+        </Label>
+      );
+    }
+    return value;
+  }
+
+  // onChangeButtonClicked(shopIndex, productType, itemIndex, action, e) {
+  //   alert(`shopIndex=${shopIndex}, action=${action} changedValeu=${e.target.value}`);
+  // }
+
+  onChangeNumber(shopIndex, productType, itemIndex, valueType, e) {
+    const newOrderedShops = [ ...this.state.mutatedOrderData.cart.shopDetail ];
+    const currentItem = newOrderedShops[shopIndex].items[productType][itemIndex];
+    const { bags, weight, quintalWeightPrice, masterWeightPrice, price } = currentItem;
+    const bagsToWeightRation = Math.round(parseFloat(quintalWeightPrice)/parseFloat(masterWeightPrice));
+    if(valueType === 'bags') {
+      currentItem[valueType] = e.target.value;
+      currentItem['weight'] = e.target.value/bagsToWeightRation;
+
+    } else if (valueType === 'weight') {
+      currentItem[valueType] = e.target.value;
+      currentItem['bags'] = e.target.value*bagsToWeightRation;
+    }
+    currentItem['price'] = currentItem['weight']*quintalWeightPrice;
+    console.log(currentItem);
+    const shop = newOrderedShops[shopIndex];
+    const { totalWeight, totalPrice } = this.getTotalPriceAndWeight(shop.items);
+    shop.totalWeight = totalWeight;
+    shop.totalShopPrice = totalPrice;
+
+
+    const newMutatedOrderData = { ...this.state.mutatedOrderData };
+    newMutatedOrderData.cart.shopDetail = newOrderedShops;
+    this.updatePrices(newMutatedOrderData, 'mutatedOrderData');
+    // this.setState({
+    //   mutatedOrderData: newMutatedOrderData
+    // }, updatePrices());
+    this.updateTotalLoad(newOrderedShops);
+  }
+
+  updateTotalLoad(newOrderedShops) {
+    let totalLoad = 0;
+    newOrderedShops.forEach( shop => {
+      totalLoad += parseFloat(shop.totalWeight);
+    });
+    this.setState({
+      currentLoad: totalLoad/10
+    });
+  }
+
+  getTotalPriceAndWeight(items) {
+    let totalWeight = 0, totalPrice = 0;
+    Object.keys(items).forEach(productType => {
+      const products = items[productType];
+      Object.keys(products).forEach(product => {
+        const { weight, price } = products[product];
+        totalWeight += parseFloat(weight);
+        totalPrice += parseFloat(price);
+      });
+    });
+    return {
+      totalWeight,
+      totalPrice
+    };
   }
 
   onChangeValue(inputName, e, data) {
@@ -555,7 +666,7 @@ export default class Cart extends Component {
       mycart.totalPrice += cart.totalPrice;
       //mycart.shopDetail= mycart.shopDetail.concat(cart.shopDetail);
     });
-    mycart.shopDetail = this.state.orderedShops;
+    mycart.shopDetail = this.state.mutatedOrderData.cart.shopDetail;
 
 
     newOrder['cart']=mycart;
@@ -620,19 +731,33 @@ export default class Cart extends Component {
   }
 
   deleteSubAgentOrders(myCart) {
-    //console.log('deleting subagent orders .....' , this.state);
     const { acceptedOrders } = this.state;
     const mobile = sessionStorage.getItem('mobile');
-    acceptedOrders.forEach((order) => {
-        let subAgentMobileNumber = order.uid;
-        let subAgentOrderId = order.orderId;
-        //console.log('deleting subagent orders .....' , subAgentMobileNumber, subAgentOrderId);
-        let mainAgentRef = ref.child('users/' + mobile + '/suborders/' +
-                      subAgentMobileNumber + '/' +subAgentOrderId );
+    if(!mobile) {
+      console.log('MOBILE NOT FOUND');
+      onFetchUserMobileNumber().then(data => {
+        console.log('MOBILE FETCHED WITH A CALL',  data.val());
+        const fetchedMobile = data.val();
+        acceptedOrders.forEach((order) => {
+            let subAgentMobileNumber = order.uid;
+            let subAgentOrderId = order.orderId;
+            let mainAgentRef = ref.child('users/' + fetchedMobile + '/suborders/' +
+              subAgentMobileNumber + '/' +subAgentOrderId );
             mainAgentRef.remove();
-
-    })
-    this.setState({acceptedOrders : []});
+        });
+        this.setState({acceptedOrders : []});
+      });
+    } else {
+      console.log('MOBILE IS ALREADY IN THE SESSION');
+      acceptedOrders.forEach((order) => {
+          let subAgentMobileNumber = order.uid;
+          let subAgentOrderId = order.orderId;
+          let mainAgentRef = ref.child('users/' + mobile + '/suborders/' +
+            subAgentMobileNumber + '/' +subAgentOrderId );
+          mainAgentRef.remove();
+      });
+      this.setState({acceptedOrders : []});
+    }
   }
 
 
