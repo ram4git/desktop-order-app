@@ -724,7 +724,16 @@ export default class Cart extends Component {
       notificationMsg: msg,
       notificationOpen: true,
       currentLoad: 0,
-      notificationOrderId: orderId
+      notificationOrderId: orderId,
+      mutatedOrderData: {
+        cart: {
+          discount_amount: 0,
+          grossPrice: 0,
+          shopDetail: [],
+          totalPrice: 0,
+          totalWeight: 0
+        }
+      }
     });
   }
 
