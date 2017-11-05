@@ -3,6 +3,8 @@ import ReactDataGrid from 'react-data-grid';
 const { Toolbar, Data: { Selectors } } = require('react-data-grid-addons');
 import { Loader } from 'semantic-ui-react';
 import { onFetchUserMobileNumber } from '../../helpers/auth'
+import { Link } from 'react-router-dom'
+
 
 
 
@@ -38,7 +40,7 @@ class orderLinkFormatter extends Component{
     const orderId = this.props.value;
     return (
       <div>
-        <a href={`/view/${orderId}`}><strong>{orderId}</strong></a>
+        <Link to={`/print/${orderId}`} ><strong>{orderId}</strong></Link>
       </div>
     );
   }
