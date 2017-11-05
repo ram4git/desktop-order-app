@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Card, Table, Header, Divider, Loader, Button } from 'semantic-ui-react'
 import moment from 'moment';
+import { Link } from 'react-router-dom'
 import { ref } from '../../config/constants'
 
 const LOADING = 'loading';
@@ -31,7 +32,7 @@ export default class OrderDetails extends Component {
     if(this.state.orderData === LOADING) {
       return (
         <div>
-          <a href='/orders'>BACK TO ORDERS</a>
+          <Link to='/orders'>BACK TO ORDERS</Link>
           <Loader active inline='centered' size='massive'/>
         </div>
       );
@@ -39,7 +40,7 @@ export default class OrderDetails extends Component {
 
     return (
       <div className="orderDetails">
-        <a href='/orders'>BACK</a>
+        <Link to='/orders'>BACK</Link>
         { this.renderMainOrder() }
       </div>
     )
