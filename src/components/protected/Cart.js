@@ -4,7 +4,6 @@ import Lorry from './Lorry'
 import { ref } from '../../config/constants'
 import { onFetchUserMobileNumber, getUserMobileNumber } from '../../helpers/auth'
 import { Header, Card, Table, Modal, Button, Message, Label, Icon, Loader } from 'semantic-ui-react'
-import Reorder from 'react-reorder'
 
 
 
@@ -171,7 +170,7 @@ export default class Cart extends Component {
     }
 
     return (
-      <Modal basic open={modalOpen} onClose={this.closeTheModal.bind(this)} className="viewModal">
+      <Modal  open={modalOpen} onClose={this.closeTheModal.bind(this)} className="viewModal">
         <Modal.Header>
           Details of order : [ <span className="head">{ modalOrderId }</span> ]
         </Modal.Header>
@@ -395,11 +394,13 @@ export default class Cart extends Component {
       shopsList.push(
           <Card fluid key={index}>
             <Card.Content>
-              <Card.Header>
+              <Card.Header as='h1'>
                 {name}, {areaId}, GST:{tin}
               </Card.Header>
               <Card.Meta>
-                {mobile}
+                <span style={ { fontSize : '44px'} }>
+                  {mobile}
+                </span>
               </Card.Meta>
               <Card.Description>
                 { this.renderItemsTable(index, items, EDIT_MODE) }
@@ -507,7 +508,7 @@ export default class Cart extends Component {
         const { name, bags, weight, quintalWeightPrice, discountedQuintalPrice, price } = productTypeItems[product];
         const discount = quintalWeightPrice - discountedQuintalPrice;
         itemsArray.push(
-          <Table.Row key={product}>
+          <Table.Row key={product} style={ {fontSize :'24px'} }>
             <Table.Cell textAlign='left'>{name}</Table.Cell>
             <Table.Cell textAlign='center'>
               { this.renderValueEditControls(mode, 'bags', bags, shopIndex, productType, product) }

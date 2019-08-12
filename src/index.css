@@ -432,6 +432,10 @@ td strong {
   color: #2980b9;
 }
 
+.viewModal {
+  margin-top : '40px';
+}
+
 .viewModal .header {
   color: orange !important;
 }
@@ -441,7 +445,7 @@ td strong {
 }
 
 .viewModal .content span.price {
-  font-size: 20px;
+  font-size: 32px;
 }
 
 .viewModal .content span.quantity {
@@ -449,7 +453,7 @@ td strong {
 }
 
 .viewModal .content .meta.discount {
-  font-size: 12px;
+  font-size: 32px;
   margin-top: -10px;
 }
 
